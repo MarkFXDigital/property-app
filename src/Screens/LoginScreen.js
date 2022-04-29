@@ -27,7 +27,7 @@ import { authentication } from "../../firebase";
 // Components
 import PropertyLogo from "../Components/PropertyLogo";
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -50,10 +50,9 @@ const LoginScreen = ({navigation}) => {
 
   const handleLogin = () => {
     signInWithEmailAndPassword(authentication, email, password)
-      .then((status) => {
-        console.log(status);
-          setIsSignedIn(true);
-          navigation.navigate("Search")
+      .then(() => {
+        setIsSignedIn(true);
+        navigation.navigate("Search");
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -66,9 +65,7 @@ const LoginScreen = ({navigation}) => {
       .then(() => {
         setIsSignedIn(false);
       })
-      .catch((userCredentials) => {
-        console.log("User signed out", userCredentials);
-      });
+      .catch((userCredentials) => {});
   };
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.mainContainer}>
