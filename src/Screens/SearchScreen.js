@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  TextInput,
 } from "react-native";
 import PropertyLogo from "../Components/PropertyLogo";
 import {
@@ -18,6 +19,8 @@ import {
 } from "victory-native";
 
 const SearchScreen = () => {
+  // Tips State
+  const [tips, setTips] = useState(false);
   // To store response data
   const [data, setData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -35,7 +38,7 @@ const SearchScreen = () => {
         `https://api.propertydata.co.uk/prices?key=TORGPUR3KY&postcode=${postcode}&bedrooms=${bedroomNum}`
       );
       const json = await response.json();
-
+      console.log(json);
       setData(json);
       setIsLoaded(true);
     } catch (error) {
@@ -45,101 +48,29 @@ const SearchScreen = () => {
 
   if (isLoaded) {
     return (
-      <View style={styles.mainContainer}>
-        <PropertyLogo />
-        <Text>
-          Welcome to Property Analyser your one stop shop for property Data.
-        </Text>
-        <TouchableOpacity onPress={fetchPriceSearch} style={styles.button}>
-          <Text style={styles.buttonText}>search</Text>
-        </TouchableOpacity>
+      <ScrollView>
+        <View style={styles.mainContainer}>
+          <PropertyLogo />
+          <Text>
+            Welcome to Property Analyser your one stop shop for property Data.
+          </Text>
+          <TouchableOpacity onPress={fetchPriceSearch} style={styles.button}>
+            <Text style={styles.buttonText}>search</Text>
+          </TouchableOpacity>
 
-        <View style={styles.graphContainer}>
-          <VictoryChart
-            height={chartHeight}
-            width={chartWidth}
-            padding={{ left: 60, bottom: 30, right: 30 }}
-          >
-            <VictoryGroup offset={15} colorScale={"qualitative"}>
-              <VictoryBar
-                data={[
-                  { x: 1, y: data.data["70pc_range"][0] },
-                  { x: 2, y: data.data["80pc_range"][0] },
-                  { x: 3, y: data.data["90pc_range"][0] },
-                ]}
-                animate={{
-                  duration: 1000,
-                  onLoad: { duration: 1000 },
-                }}
-                cornerRadius={6}
-                style={{
-                  data: {
-                    // fill: colors.skyBle,
-                  },
-                }}
-                barWidth={10}
-              />
-
-              <VictoryBar
-                data={[
-                  { x: 1, y: data.data["70pc_range"][1] },
-                  { x: 2, y: data.data["80pc_range"][1] },
-                  { x: 3, y: data.data["90pc_range"][1] },
-                ]}
-                animate={{
-                  duration: 2000,
-                  onLoad: { duration: 1000 },
-                }}
-                cornerRadius={6}
-                style={{
-                  data: {
-                    // fill: colors.primary,
-                  },
-                }}
-                barWidth={10}
-                labelComponent={CenteredLabel}
-              />
-              <VictoryAxis
-                tickValues={["70% Range", "80% Range", "90% Range"]}
-                style={{
-                  tickLabels: {
-                    fontSize: 7,
-                  },
-                  //   tickLabels: { color: colors.blackL },
-                  //   ticks: { color: colors.blackL },
-                }}
-              />
-              <VictoryAxis
-                dependentAxis
-                orientation="left"
-                style={{ tickLabels: { fontSize: 5 } }}
-                fixLabelOverlap={true}
-              />
-            </VictoryGroup>
-          </VictoryChart>
-        </View>
-      </View>
-    );
-  } else {
-    return (
-      <View style={styles.mainContainer}>
-        <PropertyLogo />
-        <Text>
-          Welcome to Property Analyser your one stop shop for property Data.
-        </Text>
-        <TouchableOpacity onPress={fetchPriceSearch} style={styles.button}>
-          <Text style={styles.buttonText}>search</Text>
-        </TouchableOpacity>
-        {isLoaded.length ? (
           <View style={styles.graphContainer}>
-            <Text>{data.data["70pc_range"][1]}</Text>
-            <VictoryChart height={chartHeight} width={chartWidth}>
+            <VictoryChart
+              height={chartHeight}
+              width={chartWidth}
+              padding={{ left: 70, bottom: 30, right: 50 }}
+            >
               <VictoryGroup offset={15} colorScale={"qualitative"}>
                 <VictoryBar
                   data={[
                     { x: 1, y: data.data["70pc_range"][0] },
                     { x: 2, y: data.data["80pc_range"][0] },
                     { x: 3, y: data.data["90pc_range"][0] },
+                    { x: 4, y: data.data["100pc_range"][0] },
                   ]}
                   animate={{
                     duration: 1000,
@@ -159,6 +90,7 @@ const SearchScreen = () => {
                     { x: 1, y: data.data["70pc_range"][1] },
                     { x: 2, y: data.data["80pc_range"][1] },
                     { x: 3, y: data.data["90pc_range"][1] },
+                    { x: 4, y: data.data["100pc_range"][1] },
                   ]}
                   animate={{
                     duration: 2000,
@@ -174,38 +106,60 @@ const SearchScreen = () => {
                   labelComponent={CenteredLabel}
                 />
                 <VictoryAxis
-                  tickValues={["70% Range", "80% Range", "90% Range"]}
+                  tickValues={["70% ", "80% ", "90% ", "100% "]}
                   style={{
                     tickLabels: {
-                      fontSize: 2,
-                      padding: 1,
-                      angle: 10,
-                      verticalAnchor: "middle",
-                      textAnchor: "start",
-                    },
-                    axisLabel: {
-                      fontSize: 100,
+                      fontSize: 7,
                     },
                     //   tickLabels: { color: colors.blackL },
                     //   ticks: { color: colors.blackL },
                   }}
                 />
                 <VictoryAxis
-                  dependentAxis={true}
-                  style={
-                    {
-                      //   tickLabels: { fill: colors.blackL },
-                      //   ticks: { stroke: colors.blackL },
-                    }
-                  }
+                  dependentAxis
+                  orientation="left"
+                  style={{ tickLabels: { fontSize: 5 } }}
+                  fixLabelOverlap={true}
                 />
               </VictoryGroup>
             </VictoryChart>
           </View>
-        ) : (
-          <Text>Is loading</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            if (tips === false) {
+              console.log(tips);
+              return setTips(true);
+            } else if (tips === true) {
+              console.log(tips);
+              return setTips(false);
+            }
+          }}
+        >
+          <Text>????</Text>
+        </TouchableOpacity>
+        {tips && (
+          <View>
+            <Text>Tips are here! </Text>
+          </View>
         )}
-      </View>
+      </ScrollView>
+    );
+  } else {
+    return (
+      <ScrollView>
+        <View style={styles.mainContainer}>
+          <PropertyLogo />
+          <Text>
+            Welcome to Property Analyser your one stop shop for property Data.
+          </Text>
+          <TouchableOpacity onPress={fetchPriceSearch} style={styles.button}>
+            <Text style={styles.buttonText}>search</Text>
+          </TouchableOpacity>
+
+          <TextInput />
+        </View>
+      </ScrollView>
     );
   }
 };
