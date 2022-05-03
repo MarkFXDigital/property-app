@@ -19,10 +19,12 @@ import {
   VictoryAxis,
   CenteredLabel,
 } from "victory-native";
+import { theme } from "../theme";
 
 const HelpScreen = () => {
-  // Tips State
+  // On Screen State
   const [tips, setTips] = useState(false);
+  const [firstSearch, setFirstSearch] = useState(true);
   // To store response data
   const [data, setData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -30,8 +32,6 @@ const HelpScreen = () => {
   // Search Params
   const [postcode, setPostcode] = useState("");
   const [bedroomNum, setBedroomNum] = useState("");
-  console.log(bedroomNum);
-  console.log(postcode);
 
   const chartHeight = Dimensions.get("window").height * 0.4;
   const chartWidth = Dimensions.get("window").width;
@@ -52,7 +52,7 @@ const HelpScreen = () => {
 
   if (isLoaded) {
     return (
-      <ScrollView>
+      <ScrollView style={styles.scrollViewContainer}>
         <View style={styles.mainContainer}>
           <PropertyLogo />
           <Text>
@@ -103,7 +103,7 @@ const HelpScreen = () => {
                   cornerRadius={6}
                   style={{
                     data: {
-                      // fill: colors.primary,
+                      fill: theme.mainGold,
                     },
                   }}
                   barWidth={10}
@@ -115,8 +115,8 @@ const HelpScreen = () => {
                     tickLabels: {
                       fontSize: 7,
                     },
-                    //   tickLabels: { color: colors.blackL },
-                    //   ticks: { color: colors.blackL },
+                    tickLabels: { color: theme.mainGold },
+                    ticks: { color: theme.mainGold },
                   }}
                 />
                 <VictoryAxis
@@ -128,25 +128,45 @@ const HelpScreen = () => {
               </VictoryGroup>
             </VictoryChart>
           </View>
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            if (tips === false) {
-              console.log(tips);
-              return setTips(true);
-            } else if (tips === true) {
-              console.log(tips);
-              return setTips(false);
-            }
-          }}
-        >
-          <Text>????</Text>
-        </TouchableOpacity>
-        {tips && (
+
+          <TouchableOpacity
+            onPress={() => {
+              if (tips === false) {
+                console.log(tips);
+                return setTips(true);
+              } else if (tips === true) {
+                console.log(tips);
+                return setTips(false);
+              }
+            }}
+          >
+            <Text>????</Text>
+          </TouchableOpacity>
+          {tips && (
+            <View>
+              <Text>Tips are here! </Text>
+            </View>
+          )}
+
           <View>
-            <Text>Tips are here! </Text>
+            <Text> Like to do another search? </Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={(val) => setPostcode(val)}
+              value={text}
+              placeholder=" Please entered desired postcode "
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={(val) => setBedroomNum(val)}
+              value={text}
+              placeholder="Please enter number of bedrooms"
+            />
+            <TouchableOpacity onPress={fetchPriceSearch} style={styles.button}>
+              <Text style={styles.buttonText}>SEARCH</Text>
+            </TouchableOpacity>
           </View>
-        )}
+        </View>
       </ScrollView>
     );
   } else {
@@ -158,7 +178,7 @@ const HelpScreen = () => {
             Welcome to Property Analyser your one stop shop for property Data.
           </Text>
           <TouchableOpacity onPress={fetchPriceSearch} style={styles.button}>
-            <Text style={styles.buttonText}>search</Text>
+            <Text style={styles.buttonText}>SEARCH</Text>
           </TouchableOpacity>
 
           <TextInput
@@ -173,9 +193,6 @@ const HelpScreen = () => {
             value={text}
             placeholder="Please enter number of bedrooms"
           />
-          <Text>
-            {bedroomNum} {postcode}
-          </Text>
         </View>
       </ScrollView>
     );
@@ -183,16 +200,29 @@ const HelpScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    backgroundColor: "transparent",
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
   mainContainer: {
     flex: 1,
     flexDirection: "column",
     marginTop: 50,
     alignItems: "center",
-    marginLeft: 0,
+    paddingBottom: 80,
   },
   graphContainer: {
     width: "100%",
     paddingLeft: 5,
+  },
+  button: {
+    width: 100,
+    backgroundColor: theme.mainGold,
+  },
+  buttonText: {
+    textAlign: "center",
+    fontSize: 16,
   },
   input: {
     height: 40,

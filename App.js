@@ -12,6 +12,11 @@ import LoginScreen from "./src/Screens/LoginScreen";
 import SearchScreen from "./src/Screens/SearchScreen";
 import HelpScreen from "./src/Screens/HelpScreen";
 
+//Price Search Screens
+import PriceSearchScreen from "./src/Screens/PriceSearch/PriceSearchScreen";
+import DemandYieldSearchScreen from "./src/Screens/Demand&Yield/DemandYieldScreen";
+import AreaStatisticsScreen from "./src/Screens/AreaStatistics/AreaStatisticsScreen";
+
 // Stack Navigators
 const loginStack = createNativeStackNavigator();
 const searchStack = createNativeStackNavigator();
@@ -21,6 +26,9 @@ const LoginStackScreen = () => (
   <loginStack.Navigator>
     <loginStack.Screen name="Login" component={LoginScreen} />
     <loginStack.Screen name="Search" component={SearchScreen} />
+    <loginStack.Screen name="PriceSearch" component={PriceSearchScreen} />
+    <loginStack.Screen name="DemandYield" component={DemandYieldSearchScreen} />
+    <loginStack.Screen name="AreaStatistics" component={AreaStatisticsScreen} />
   </loginStack.Navigator>
 );
 // const SearchStackScreen = () => (
