@@ -14,8 +14,15 @@ import HelpScreen from "./src/Screens/HelpScreen";
 
 //Price Search Screens
 import PriceSearchScreen from "./src/Screens/PriceSearch/PriceSearchScreen";
+import AvgPriceSearch from "./src/Screens/PriceSearch/Searches/AvgPriceSearch";
+
+//Demand Yield Screens
 import DemandYieldSearchScreen from "./src/Screens/Demand&Yield/DemandYieldScreen";
+import AvgRentsScreen from "./src/Screens/Demand&Yield/Searches/AvgRentsScreen";
+
+// Area Statistic Screens
 import AreaStatisticsScreen from "./src/Screens/AreaStatistics/AreaStatisticsScreen";
+import SocialPoliticsScreen from "./src/Screens/AreaStatistics/Searches/SocialPoliticsScreen";
 
 // Stack Navigators
 const loginStack = createNativeStackNavigator();
@@ -26,9 +33,21 @@ const LoginStackScreen = () => (
   <loginStack.Navigator>
     <loginStack.Screen name="Login" component={LoginScreen} />
     <loginStack.Screen name="Search" component={SearchScreen} />
-    <loginStack.Screen name="PriceSearch" component={PriceSearchScreen} />
-    <loginStack.Screen name="DemandYield" component={DemandYieldSearchScreen} />
-    <loginStack.Screen name="AreaStatistics" component={AreaStatisticsScreen} />
+
+    <loginStack.Screen name="Price Search" component={PriceSearchScreen} />
+    <loginStack.Screen name="Avg Price Search" component={AvgPriceSearch} />
+
+    <loginStack.Screen
+      name="Demand Yield"
+      component={DemandYieldSearchScreen}
+    />
+    <loginStack.Screen name="Average Rents" component={AvgRentsScreen} />
+
+    <loginStack.Screen
+      name="Area Statistics"
+      component={AreaStatisticsScreen}
+    />
+    <loginStack.Screen name="Demographics" component={SocialPoliticsScreen} />
   </loginStack.Navigator>
 );
 // const SearchStackScreen = () => (

@@ -21,7 +21,7 @@ const SearchScreen = ({ navigation }) => {
         <PropertyLogo />
         <TouchableOpacity
           styles={styles.imageContainer}
-          onPress={() => navigation.navigate("PriceSearch")}
+          onPress={() => navigation.navigate("Price Search")}
         >
           <ImageBackground
             source={homeImageOne}
@@ -33,7 +33,7 @@ const SearchScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity
           styles={styles.imageContainer}
-          onPress={() => navigation.navigate("DemandYield")}
+          onPress={() => navigation.navigate("Demand Yield")}
         >
           <ImageBackground
             source={homeImageTwo}
@@ -43,7 +43,7 @@ const SearchScreen = ({ navigation }) => {
             <Text style={styles.imageText}> Demand & Yield </Text>
           </ImageBackground>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("AreaStatistics")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Area Statistics")}>
           <View styles={styles.imageContainer}>
             <ImageBackground
               source={homeImageThree}
