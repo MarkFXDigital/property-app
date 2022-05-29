@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -15,6 +15,9 @@ import HelpScreen from "./src/Screens/HelpScreen";
 //Price Search Screens
 import PriceSearchScreen from "./src/Screens/PriceSearch/PriceSearchScreen";
 import AvgPriceSearch from "./src/Screens/PriceSearch/Searches/AvgPriceSearch";
+import GrowthSearch from "./src/Screens/PriceSearch/Searches/GrowthSearch";
+import SoldPrices from "./src/Screens/PriceSearch/Searches/SoldPrice/SoldPrices";
+import SoldPriceData from "./src/Screens/PriceSearch/Searches/SoldPrice/SoldPriceData";
 
 //Demand Yield Screens
 import DemandYieldSearchScreen from "./src/Screens/Demand&Yield/DemandYieldScreen";
@@ -36,6 +39,9 @@ const LoginStackScreen = () => (
 
     <loginStack.Screen name="Price Search" component={PriceSearchScreen} />
     <loginStack.Screen name="Avg Price Search" component={AvgPriceSearch} />
+    <loginStack.Screen name="5 Year Growth Search" component={GrowthSearch} />
+    <loginStack.Screen name="Sold Prices" component={SoldPrices} />
+    <loginStack.Screen name="Sold Price Data" component={SoldPriceData} />
 
     <loginStack.Screen
       name="Demand Yield"
@@ -50,11 +56,7 @@ const LoginStackScreen = () => (
     <loginStack.Screen name="Demographics" component={SocialPoliticsScreen} />
   </loginStack.Navigator>
 );
-// const SearchStackScreen = () => (
-//   <searchStack.Navigator>
-//     <searchStack.Screen name="Search" component={SearchScreen} />
-//   </searchStack.Navigator>
-// );
+
 const HelpStackScreen = () => (
   <helpStack.Navigator>
     <helpStack.Screen name="Help" component={HelpScreen} />

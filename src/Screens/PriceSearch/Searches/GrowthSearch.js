@@ -1,5 +1,4 @@
-import { async } from "@firebase/util";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -8,24 +7,20 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
-    text,
-  FlatList
- 
+  text,
 } from "react-native";
 import PropertyLogo from "../../../Components/PropertyLogo";
 import {
-  VictoryBar,
   VictoryChart,
-  VictoryGroup,
+  VictoryLine,
   VictoryAxis,
-  CenteredLabel,
+  VictoryClipContainer,
 } from "victory-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { theme } from "../../../theme";
 import { Ionicons } from "@expo/vector-icons";
 
-
-const AvgPriceSearch = () => {
+const GrowthSearch = () => {
   // On Screen State
   const [tips, setTips] = useState(false);
   const [firstSearch, setFirstSearch] = useState(true);
@@ -35,7 +30,6 @@ const AvgPriceSearch = () => {
 
   // Search Params
   const [postcode, setPostcode] = useState("");
-  const [bedroomNum, setBedroomNum] = useState("");
 
   const chartHeight = Dimensions.get("window").height * 0.4;
   const chartWidth = Dimensions.get("window").width;
@@ -43,13 +37,14 @@ const AvgPriceSearch = () => {
   const fetchPriceSearch = async () => {
     try {
       const response = await fetch(
-        `https://api.propertydata.co.uk/prices?key=TORGPUR3KY&postcode=${postcode}&bedrooms=${bedroomNum}`
+        `https://api.propertydata.co.uk/growth?key=TORGPUR3KY&postcode=${postcode}`
       );
       const json = await response.json();
-      console.log(json);
+      //   console.log(json);
       setData(json);
       setIsLoaded(true);
     } catch (error) {
+      setIsLoaded(false);
       console.error(error);
     }
   };
@@ -82,66 +77,45 @@ const AvgPriceSearch = () => {
             <VictoryChart
               height={chartHeight}
               width={chartWidth}
-              padding={{ left: 70, bottom: 30, right: 50, top: 30 }}
+              padding={{ left: 70, bottom: 30, right: 50, top: 20 }}
             >
-              <VictoryGroup offset={15} colorScale={"qualitative"}>
-                <VictoryBar
-                  data={[
-                    { x: 1, y: data.data["70pc_range"][0] },
-                    { x: 2, y: data.data["80pc_range"][0] },
-                    { x: 3, y: data.data["90pc_range"][0] },
-                    { x: 4, y: data.data["100pc_range"][0] },
-                  ]}
-                  animate={{
-                    duration: 1000,
-                    onLoad: { duration: 1000 },
-                  }}
-                  cornerRadius={6}
+              <VictoryChart>
+                <VictoryLine
+                  groupComponent={
+                    <VictoryClipContainer clipPadding={{ top: 5, right: 10 }} />
+                  }
                   style={{
                     data: {
-                     
+                      stroke: theme.mainGold,
+                      strokeWidth: 10,
+                      strokeLinecap: "round",
                     },
                   }}
-                  barWidth={10}
-                />
-
-                <VictoryBar
                   data={[
-                    { x: 1, y: data.data["70pc_range"][1] },
-                    { x: 2, y: data.data["80pc_range"][1] },
-                    { x: 3, y: data.data["90pc_range"][1] },
-                    { x: 4, y: data.data["100pc_range"][1] },
+                    { x: 1, y: data.data[0][1] },
+                    { x: 2, y: data.data[1][1] },
+                    { x: 3, y: data.data[2][1] },
+                    { x: 4, y: data.data[3][1] },
+                    { x: 5, y: data.data[4][1] },
                   ]}
-                  animate={{
-                    duration: 2000,
-                    onLoad: { duration: 1000 },
-                  }}
-                  cornerRadius={6}
-                  style={{
-                    data: {
-                      fill: theme.mainGold,
-                    },
-                  }}
-                  barWidth={10}
-                  labelComponent={CenteredLabel}
                 />
-                <VictoryAxis
-                  tickValues={["70% ", "80% ", "90% ", "100% "]}
-                  style={{
-                    tickLabels: {
-                      fontSize: 7,
-                    },
-                    tickLabels: { color: theme.mainGold },
-                    ticks: { color: theme.mainGold },
-                  }}
-                />
-                <VictoryAxis
-                  dependentAxis
-                  orientation="left"
-                  style={{ tickLabels: { fontSize: 5 } }}
-                  fixLabelOverlap={true}
-                />
-              </VictoryGroup>
+              </VictoryChart>
+              <VictoryAxis
+                tickValues={[
+                  "May 2017 ",
+                  "May 2018 ",
+                  "May 2019 ",
+                  "May 2020 ",
+                  "May 2021",
+                ]}
+                style={{
+                  tickLabels: {
+                    fontSize: 7,
+                  },
+                  tickLabels: { color: theme.mainGold },
+                  ticks: { color: theme.mainGold },
+                }}
+              />
             </VictoryChart>
             {tips && (
               <View style={styles.tipContainer}>
@@ -162,13 +136,21 @@ const AvgPriceSearch = () => {
                 </TouchableOpacity>
                 <Text style={styles.tipText}> * Y axis is in thousands</Text>
                 <Text style={styles.tipText}>
-                  * X axis it the range in which values occur within designated
-                  search area
+                  First Year Growth{"  "} {data.data[1][2]}
+                </Text>
+                <Text style={styles.tipText}>
+                  Second Year Growth{"  "} {data.data[2][2]}
+                </Text>
+                <Text style={styles.tipText}>
+                  Third Year Growth{"  "} {data.data[3][2]}
+                </Text>
+                <Text style={styles.tipText}>
+                  Fourth Year Growth{"  "}
+                  {data.data[4][2]}
                 </Text>
               </View>
             )}
-                </View>
-               
+          </View>
 
           <View style={styles.searchAgainContainer}>
             <Text> Like to do another search? </Text>
@@ -178,12 +160,7 @@ const AvgPriceSearch = () => {
               value={text}
               placeholder=" Please entered desired postcode "
             />
-            <TextInput
-              style={styles.input}
-              onChangeText={(val) => setBedroomNum(val)}
-              value={text}
-              placeholder="Please enter number of bedrooms"
-            />
+
             <TouchableOpacity onPress={fetchPriceSearch} style={styles.button}>
               <Text style={styles.buttonText}>SEARCH</Text>
             </TouchableOpacity>
@@ -207,12 +184,7 @@ const AvgPriceSearch = () => {
             value={text}
             placeholder=" Please entered desired postcode "
           />
-          <TextInput
-            style={styles.input}
-            onChangeText={(val) => setBedroomNum(val)}
-            value={text}
-            placeholder="Please enter number of bedrooms"
-          />
+
           <TouchableOpacity onPress={fetchPriceSearch} style={styles.button}>
             <Text style={styles.buttonText}>SEARCH</Text>
           </TouchableOpacity>
@@ -286,4 +258,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AvgPriceSearch;
+export default GrowthSearch;
