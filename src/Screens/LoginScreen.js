@@ -68,6 +68,7 @@ const LoginScreen = ({ navigation }) => {
       .catch((userCredentials) => {});
   };
   return (
+
     <KeyboardAvoidingView behavior="padding" style={styles.mainContainer}>
       <PropertyLogo />
       <View style={styles.inputContainer}>

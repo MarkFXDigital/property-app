@@ -1,11 +1,13 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { LogBox } from "react-native";
+import {Provider as PaperProvider} from 'react-native-paper'
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { theme } from "./src/theme";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { LogBox } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+
 
 //screens
 import LoginScreen from "./src/Screens/LoginScreen";
@@ -88,15 +90,16 @@ export function AppTabsNavigation() {
         },
 
         tabBarStyle: {
-          height: 55,
-          position: "absolute",
+          // height: 55,
+          // position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,
           zIndex: 4,
           borderTopWidth: 0,
+            borderColor: "#011f3b"
         },
-        style: { borderColor: "#011f3b" },
+
         headerShown: false,
         unmountOnBlur: true,
       }}
@@ -152,9 +155,11 @@ export function AppTabsNavigation() {
 
 const App = () => {
   return (
+      <PaperProvider>
     <NavigationContainer>
       <AppTabsNavigation />
     </NavigationContainer>
+      </PaperProvider>
   );
 };
 
