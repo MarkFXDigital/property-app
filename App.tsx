@@ -10,7 +10,7 @@ import { NavigationContainer } from "@react-navigation/native";
 
 
 //screens
-import LoginScreen from "./src/Screens/LoginScreen";
+import LoginScreen from "./src/Screens/Login/LoginScreen";
 import SearchScreen from "./src/Screens/SearchScreen";
 import HelpScreen from "./src/Screens/HelpScreen";
 
@@ -28,6 +28,7 @@ import AvgRentsScreen from "./src/Screens/Demand&Yield/Searches/AvgRentsScreen";
 // Area Statistic Screens
 import AreaStatisticsScreen from "./src/Screens/AreaStatistics/AreaStatisticsScreen";
 import SocialPoliticsScreen from "./src/Screens/AreaStatistics/Searches/SocialPoliticsScreen";
+import {RegisterScreen} from "./src/Screens/Login/register/RegisterScreen";
 
 // Stack Navigators
 const loginStack = createNativeStackNavigator();
@@ -37,6 +38,7 @@ const helpStack = createNativeStackNavigator();
 const LoginStackScreen = () => (
   <loginStack.Navigator>
     <loginStack.Screen name="Login" component={LoginScreen} />
+      <loginStack.Screen name="Register" component={RegisterScreen} />
     <loginStack.Screen name="Search" component={SearchScreen} />
 
     <loginStack.Screen name="Price Search" component={PriceSearchScreen} />
@@ -155,7 +157,7 @@ export function AppTabsNavigation() {
 
 const App = () => {
   return (
-      <PaperProvider>
+      <PaperProvider theme={theme}>
     <NavigationContainer>
       <AppTabsNavigation />
     </NavigationContainer>
