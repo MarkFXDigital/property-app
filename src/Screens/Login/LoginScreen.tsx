@@ -31,15 +31,61 @@ import { authentication } from '../../../firebase'
 // Components
 import PropertyLogo from '../../Components/PropertyLogo'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Button, Card, TextInput } from 'react-native-paper'
+import { Button, Card, Snackbar, TextInput } from 'react-native-paper'
 import { loginStyle } from './login.style'
 import { Formik } from 'formik'
 import { loginForm } from './login.form'
+import { LoadingState } from '../../store/loading/LoadingState'
+import { hide, show } from '../../store/loading/loading.actions'
+import { toast } from 'react-toastify'
+import dismiss = toast.dismiss
+import { bindActionCreators } from '@reduxjs/toolkit'
+import { connect } from 'react-redux'
+import { AppState } from '../../AppState'
+import {
+    recoverPassword,
+    recoverPasswordSuccess,
+} from '../../store/login/login.actions'
+import { LoginState } from '../../store/login/LoginState'
+import AuthService from '../../services/AuthService'
 
-const LoginScreen = ({ navigation }: any) => {
+interface LoginScreenProps {
+    navigation: any
+    loadingState: LoadingState
+    loginState: LoginState
+    recoverPassword: Function
+    recoverPasswordSuccess: Function
+    hideLoading: Function
+    showLoading: Function
+}
+
+const LoginScreen = (props: LoginScreenProps) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isSignedIn, setIsSignedIn] = useState(false)
+    const [recoveryEmail, setRecoveryEmail] = useState('')
+
+    const login = () => props.navigation.navigate('Search')
+    const register = () => props.navigation.navigate('Register')
+
+    useEffect(() => {
+        if (props.loginState.isRecoveringPassword) {
+            props.showLoading()
+            AuthService.recoverPassword(recoveryEmail).then(() => {
+                props.recoverPasswordSuccess()
+                setTimeout(() => {
+                    props.hideLoading()
+                }, 2000)
+            })
+        } else {
+            props.hideLoading
+        }
+    }, [props.loginState.isRecoveringPassword])
+
+    const forgotEmailPassword = (email: string) => {
+        setRecoveryEmail(email)
+        props.recoverPassword()
+    }
 
     const handleSignup = () => {
         createUserWithEmailAndPassword(authentication, email, password)
@@ -68,9 +114,6 @@ const LoginScreen = ({ navigation }: any) => {
     //       const errorMessage = error.message;
     //     });
     // };
-
-    const login = () => navigation.navigate('Search')
-    const register = () => navigation.navigate('Register')
 
     const handleLogout = () => {
         signOut(authentication)
@@ -143,6 +186,9 @@ const LoginScreen = ({ navigation }: any) => {
                                         </Text>
                                     ) : null}
                                     <Button
+                                        onPress={() =>
+                                            forgotEmailPassword(values.email)
+                                        }
                                         style={loginStyle.cardButton}
                                         uppercase={false}
                                         testID="recoveryButton"
@@ -176,9 +222,37 @@ const LoginScreen = ({ navigation }: any) => {
                     </Card.Content>
                 </Card>
             </View>
+            {props.recoverPasswordSuccess ? (
+                <Snackbar
+                    duration={5000}
+                    visible={true}
+                    onDismiss={() => {}}
+                    testID="recoverPasswordSuccess"
+                >
+                    Recovery email sent
+                </Snackbar>
+            ) : null}
         </SafeAreaView>
     )
 }
+
+const mapStateToProps = (store: AppState) => ({
+    loadingState: store.loading,
+    loginState: store.login,
+})
+
+const mapDispatchToProps = (dispatch: any) =>
+    bindActionCreators(
+        {
+            showLoading: show,
+            hideLoading: hide,
+            recoverPassword: recoverPassword,
+            recoverPasswordSuccess: recoverPasswordSuccess,
+        },
+        dispatch
+    )
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)
 
 const styles = StyleSheet.create({
     mainContainer: {
@@ -229,5 +303,3 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
 })
-
-export default LoginScreen

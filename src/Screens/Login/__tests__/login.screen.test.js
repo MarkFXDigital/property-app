@@ -1,15 +1,24 @@
 import LoginScreen from '../LoginScreen'
 import { fireEvent, render, waitFor } from '@testing-library/react-native'
 import { loginForm } from '../login.form'
+import { Provider } from 'react-redux'
+import { store } from '../../../store/store'
 
 describe('Login screen', function () {
+    const renderLoginScreen = (navigation) => {
+        return (
+            <Provider store={store}>
+                <LoginScreen navigation={navigation} />
+            </Provider>
+        )
+    }
     it('should go to search screen on login', async () => {
         const navigation = {
             navigate: () => {},
         }
         const spy = jest.spyOn(navigation, 'navigate')
 
-        const page = render(<LoginScreen navigation={navigation} />)
+        const page = render(renderLoginScreen(navigation))
         const email = page.getByTestId('email')
         const password = page.getByTestId('password')
         fireEvent.changeText(email, 'valid@email.com')
@@ -29,7 +38,7 @@ describe('Login screen', function () {
         }
         const spy = jest.spyOn(navigation, 'navigate')
 
-        const page = render(<LoginScreen navigation={navigation} />)
+        const page = render(renderLoginScreen(navigation))
 
         const registerButton = page.getByTestId('registerButton')
 
@@ -60,7 +69,7 @@ describe('Login screen', function () {
         expect(loginForm.isValidSync(formValues)).toBeTruthy()
     })
     it('should show error messge if email is touched and it is empty', async () => {
-        const page = render(<LoginScreen />)
+        const page = render(renderLoginScreen())
 
         const email = page.getByTestId('email')
         fireEvent.changeText(email, '')
@@ -71,14 +80,14 @@ describe('Login screen', function () {
         await waitFor(() => page.getByTestId('error-email'))
     })
     it('should hide error message if email has not been touched', async () => {
-        const page = render(<LoginScreen />)
+        const page = render(renderLoginScreen())
 
         await waitFor(() =>
             expect(page.queryAllByTestId('error-password').length).toEqual(0)
         )
     })
     it('should disable the recovery password button if email is empty', async () => {
-        const page = render(<LoginScreen />)
+        const page = render(renderLoginScreen())
 
         const recoveryButton = page.getByTestId('recoveryButton')
 
@@ -89,7 +98,7 @@ describe('Login screen', function () {
         )
     })
     it('should disable the recovery button if email has a error', async () => {
-        const page = render(<LoginScreen />)
+        const page = render(renderLoginScreen())
         const email = page.getByTestId('email')
         fireEvent.changeText(email, 'invalid')
         const recoveryButton = page.getByTestId('recoveryButton')
@@ -99,5 +108,29 @@ describe('Login screen', function () {
                 recoveryButton.props.accessibilityState.disabled
             ).toBeTruthy()
         )
+    })
+    it('should show loading component and recover password on the forgot email/password', () => {
+        const screen = render(renderLoginScreen())
+        const email = screen.getByTestId('email')
+        fireEvent.changeText(email, 'valid@email.com')
+        const forgotEmailPasswordButton = screen.getByTestId('recoveryButton')
+        fireEvent.press(forgotEmailPasswordButton)
+
+        expect(store.getState().login.isRecoveringPassword).toBeTruthy()
+        expect(store.getState().loading.show).toBeTruthy()
+    })
+
+    it('should show loading component and recover password on the forgot email/password', async () => {
+        const screen = render(renderLoginScreen())
+        const email = screen.getByTestId('email')
+        fireEvent.changeText(email, 'valid@email.com')
+        const forgotEmailPasswordButton = screen.getByTestId('recoveryButton')
+        fireEvent.press(forgotEmailPasswordButton)
+
+        await waitFor(() => {
+            expect(store.getState().login.hasRecoveredPassword).toBeTruthy()
+            // expect(store.getState().loading.show).toBeFalsy()
+            screen.getByTestId('recoverPasswordSuccess')
+        })
     })
 })
