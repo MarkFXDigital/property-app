@@ -3,6 +3,12 @@ import { fireEvent, render, waitFor } from '@testing-library/react-native'
 import { loginForm } from '../login.form'
 import { Provider } from 'react-redux'
 import { store } from '../../../store/store'
+import {
+    recoverPassword,
+    recoverPasswordFail,
+    recoverPasswordReset,
+    recoverPasswordSuccess,
+} from '../../../store/login/login.actions'
 
 describe('Login screen', function () {
     const renderLoginScreen = (navigation) => {
@@ -132,5 +138,39 @@ describe('Login screen', function () {
             // expect(store.getState().loading.show).toBeFalsy()
             screen.getByTestId('recoverPasswordSuccess')
         })
+    })
+    it('should success message when recover password is false ', async () => {
+        const screen = render(<LoginScreen store={store} />)
+
+        store.dispatch(recoverPassword())
+        store.dispatch(recoverPasswordSuccess())
+        store.dispatch(recoverPasswordReset())
+
+        expect(
+            screen.queryAllByTestId('recoverPasswordSuccess').length
+        ).toEqual(0)
+    })
+    it('should hide loading component show error message when user has recovered password with an error', async () => {
+        const screen = render(renderLoginScreen())
+        const email = screen.getByTestId('email')
+        fireEvent.changeText(email, 'error@email.com')
+        const forgotEmailPasswordButton = screen.getByTestId('recoveryButton')
+        fireEvent.press(forgotEmailPasswordButton)
+
+        await waitFor(() => {
+            expect(store.getState().login.hasRecoveredPassword).toBeFalsy()
+            expect(store.getState().login.error).not.toBeNull()
+            // expect(store.getState().loading.show).toBeFalsy()
+            screen.getByTestId('recoverPasswordFail')
+        })
+    })
+    it('should success message when recover password is false ', async () => {
+        const screen = render(<LoginScreen store={store} />)
+
+        store.dispatch(recoverPassword())
+        store.dispatch(recoverPasswordFail({ error: 'message' }))
+        store.dispatch(recoverPasswordReset())
+
+        expect(screen.queryAllByTestId('recoverPasswordFail').length).toEqual(0)
     })
 })

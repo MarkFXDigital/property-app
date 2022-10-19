@@ -7,3 +7,10 @@ export const recoverPasswordFail = createAction(
     (error: any) => ({ payload: error })
 )
 export const recoverPasswordReset = createAction('[Recover password] reset')
+export const loggingInWithRedux = createAction(
+    '[login]',
+    (email: string, password: string) => ({
+        payload: email,
+        password,
+    })
+)

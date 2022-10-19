@@ -12,4 +12,11 @@ export const AppInitialState: AppState = {
         isLoggedIn: false,
         user: null,
     },
+    loggingInState: {
+        email: '',
+        password: '',
+        isLoggingIn: false,
+        loggedInSuccess: false,
+        loggedInFail: false,
+    },
 }

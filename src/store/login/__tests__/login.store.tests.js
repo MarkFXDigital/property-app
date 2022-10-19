@@ -9,7 +9,7 @@ import { AppInitialState } from '../../../AppInitialState'
 
 describe('Login store', () => {
     const initialState = {
-        ...AppInitialState,
+        ...AppInitialState.login,
     }
     it('should be in the process recovering password', () => {
         const newState = loginReducer(initialState, recoverPassword())
@@ -22,7 +22,7 @@ describe('Login store', () => {
     })
     it('should have finished and recovered password', () => {
         const initialState = {
-            ...AppInitialState,
+            ...AppInitialState.login,
             isRecoveringPassword: false,
         }
         const newState = loginReducer(initialState, recoverPasswordSuccess())
@@ -35,7 +35,7 @@ describe('Login store', () => {
     })
     it('should user fail to recover password', () => {
         const initialState = {
-            ...AppInitialState,
+            ...AppInitialState.login,
         }
         const error = { message: 'error' }
         const newState = loginReducer(initialState, recoverPasswordFail(error))
@@ -53,8 +53,8 @@ describe('Login store', () => {
             hasRecoveredPassword: true,
             isRecoveringPassword: true,
         }
-
-        const newState = loginReducer(initialState, recoverPasswordReset)
+        const error = { message: 'message' }
+        const newState = loginReducer(initialState, recoverPasswordReset())
 
         expect(newState).toEqual({
             ...AppInitialState.login,

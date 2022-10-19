@@ -43,11 +43,17 @@ import { bindActionCreators } from '@reduxjs/toolkit'
 import { connect } from 'react-redux'
 import { AppState } from '../../AppState'
 import {
+    loggingInWithRedux,
     recoverPassword,
+    recoverPasswordFail,
+    recoverPasswordReset,
     recoverPasswordSuccess,
 } from '../../store/login/login.actions'
 import { LoginState } from '../../store/login/LoginState'
 import AuthService from '../../services/AuthService'
+import { Simulate } from 'react-dom/test-utils'
+import error = Simulate.error
+import { loggedInSlice, logIn } from '../../store/login/login.slice'
 
 interface LoginScreenProps {
     navigation: any
@@ -55,8 +61,11 @@ interface LoginScreenProps {
     loginState: LoginState
     recoverPassword: Function
     recoverPasswordSuccess: Function
+    recoverPasswordFail: Function
+    recoveredPasswordReset: Function
     hideLoading: Function
     showLoading: Function
+    loggingInWithRedux: Function
 }
 
 const LoginScreen = (props: LoginScreenProps) => {
@@ -65,18 +74,22 @@ const LoginScreen = (props: LoginScreenProps) => {
     const [isSignedIn, setIsSignedIn] = useState(false)
     const [recoveryEmail, setRecoveryEmail] = useState('')
 
-    const login = () => props.navigation.navigate('Search')
+    // const login = () => props.navigation.navigate('Search')
     const register = () => props.navigation.navigate('Register')
 
     useEffect(() => {
         if (props.loginState.isRecoveringPassword) {
             props.showLoading()
-            AuthService.recoverPassword(recoveryEmail).then(() => {
-                props.recoverPasswordSuccess()
-                setTimeout(() => {
-                    props.hideLoading()
-                }, 2000)
-            })
+            AuthService.recoverPassword(recoveryEmail)
+                .then(() => {
+                    props.recoverPasswordSuccess()
+                    setTimeout(() => {
+                        props.hideLoading()
+                    }, 2000)
+                })
+                .catch((error) => {
+                    props.recoverPasswordFail(error)
+                })
         } else {
             props.hideLoading
         }
@@ -103,17 +116,22 @@ const LoginScreen = (props: LoginScreenProps) => {
             })
     }
 
-    // const handleLogin = () => {
-    //   signInWithEmailAndPassword(authentication, email, password)
-    //     .then(() => {
-    //       setIsSignedIn(true);
-    //       navigation.navigate("Search");
-    //     })
-    //     .catch((error) => {
-    //       const errorCode = error.code;
-    //       const errorMessage = error.message;
-    //     });
-    // };
+    const login = (email: string, password: string) => {
+        signInWithEmailAndPassword(authentication, email, password)
+            .then(() => {
+                setIsSignedIn(true)
+                console.log(isSignedIn)
+                props.navigation.navigate('Search')
+            })
+            .catch((error) => {
+                const errorCode = error.code
+                const errorMessage = error.message
+            })
+    }
+
+    const handleLoginWithRedux = (email: string, password: string) => {
+        props.loggingInWithRedux(email, password)
+    }
 
     const handleLogout = () => {
         signOut(authentication)
@@ -134,7 +152,7 @@ const LoginScreen = (props: LoginScreenProps) => {
                     <Card.Content>
                         <Formik
                             initialValues={{ email: '', password: '' }}
-                            onSubmit={login}
+                            onSubmit={}
                             validationSchema={loginForm}
                         >
                             {({
@@ -193,9 +211,10 @@ const LoginScreen = (props: LoginScreenProps) => {
                                         uppercase={false}
                                         testID="recoveryButton"
                                         disabled={
-                                            values.email === '' || errors.email
-                                                ? true
-                                                : false
+                                            !!(
+                                                values.email === '' ||
+                                                errors.email
+                                            )
                                         }
                                     >
                                         Forgot email/password
@@ -222,12 +241,22 @@ const LoginScreen = (props: LoginScreenProps) => {
                     </Card.Content>
                 </Card>
             </View>
-            {props.recoverPasswordSuccess ? (
+            {props.loginState.hasRecoveredPassword ? (
                 <Snackbar
-                    duration={5000}
+                    duration={3000}
                     visible={true}
-                    onDismiss={() => {}}
+                    onDismiss={() => props.recoveredPasswordReset()}
                     testID="recoverPasswordSuccess"
+                >
+                    Recovery email sent
+                </Snackbar>
+            ) : null}
+            {props.loginState.error ? (
+                <Snackbar
+                    duration={3000}
+                    visible={true}
+                    onDismiss={() => props.recoveredPasswordReset()}
+                    testID="recoverPasswordFail"
                 >
                     Recovery email sent
                 </Snackbar>
@@ -248,6 +277,9 @@ const mapDispatchToProps = (dispatch: any) =>
             hideLoading: hide,
             recoverPassword: recoverPassword,
             recoverPasswordSuccess: recoverPasswordSuccess,
+            recoverPasswordFail: recoverPasswordFail,
+            recoveredPasswordReset: recoverPasswordReset,
+            loggingInWithRedux: loggingInWithRedux,
         },
         dispatch
     )

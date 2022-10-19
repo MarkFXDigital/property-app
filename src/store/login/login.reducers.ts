@@ -1,6 +1,7 @@
-import { LoginState } from './LoginState'
+import { LoggingInInfo, LoginState } from './LoginState'
 import { createReducer } from '@reduxjs/toolkit'
 import {
+    loggingInWithRedux,
     recoverPassword,
     recoverPasswordFail,
     recoverPasswordReset,
@@ -10,6 +11,7 @@ import { AppState } from '../../AppState'
 import { AppInitialState } from '../../AppInitialState'
 
 const initialState: LoginState = AppInitialState.login
+const initialLogInState: LoggingInInfo = AppInitialState.loggingInState
 
 export const loginReducer = createReducer(initialState, (builder) => {
     builder.addCase(recoverPassword, (currentState) => {
@@ -43,5 +45,19 @@ export const loginReducer = createReducer(initialState, (builder) => {
             isRecoveringPassword: false,
             hasRecoveredPassword: false,
         }
+    })
+})
+
+// logged
+
+export const loggingInReducer = createReducer(initialLogInState, (builder) => {
+    builder.addCase(loggingInWithRedux, (currentState) => {
+        return {
+            ...currentState,
+            isLoggingIn: false,
+            loggedInSuccess: false,
+            loggedInFail: false,
+        }
+        console.log(currentState)
     })
 })

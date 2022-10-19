@@ -6,3 +6,10 @@ export interface LoginState {
     hasRecoveredPassword: boolean
     user: any
 }
+export interface LoggingInInfo {
+    email: string
+    password: string
+    isLoggingIn: boolean
+    loggedInSuccess: boolean
+    loggedInFail: boolean
+}
