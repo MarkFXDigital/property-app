@@ -2,7 +2,7 @@ import { loadingReducer } from '../loading.reducer'
 import { hide, show } from '../loading.actions'
 import { createAction } from '@reduxjs/toolkit'
 
-describe('loading store', () => {
+describe('loading redux', () => {
     it('should show be true when when show is used', () => {
         const initialState = { show: false }
         const newState = loadingReducer(initialState, show)

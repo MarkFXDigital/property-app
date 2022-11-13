@@ -1,44 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { theme } from '../../theme'
-import {
-    View,
-    StyleSheet,
-    Text,
-    KeyboardAvoidingView,
-    TouchableOpacity,
-    SafeAreaView,
-} from 'react-native'
-
-//firestore
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite'
-
-// Navigation
-import {
-    NavigationContainer,
-    NavigationProp,
-    ParamListBase,
-} from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
-
-// Firebase
-import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-} from 'firebase/auth'
+import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import { authentication } from '../../../firebase'
 
 // Components
 import PropertyLogo from '../../Components/PropertyLogo'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Button, Card, Snackbar, TextInput } from 'react-native-paper'
+import { Button, Card, TextInput } from 'react-native-paper'
 import { loginStyle } from './login.style'
 import { Formik } from 'formik'
 import { loginForm } from './login.form'
-import { LoadingState } from '../../store/loading/LoadingState'
-import { hide, show } from '../../store/loading/loading.actions'
-import { toast } from 'react-toastify'
-import dismiss = toast.dismiss
+import { LoadingState } from '../../redux/loading/LoadingState'
+import { hide, show } from '../../redux/loading/loading.actions'
 import { bindActionCreators } from '@reduxjs/toolkit'
 import { connect } from 'react-redux'
 import { AppState } from '../../AppState'
@@ -48,12 +21,12 @@ import {
     recoverPasswordFail,
     recoverPasswordReset,
     recoverPasswordSuccess,
-} from '../../store/login/login.actions'
-import { LoginState } from '../../store/login/LoginState'
-import AuthService from '../../services/AuthService'
-import { Simulate } from 'react-dom/test-utils'
-import error = Simulate.error
-import { loggedInSlice, logIn } from '../../store/login/login.slice'
+} from '../../redux/login/login.actions'
+import { LoginState } from '../../redux/login/LoginState'
+import { login } from '../../redux/reducerSlice/slice'
+import { store } from '../../redux/reducerSlice/store'
+import { errorMessage } from '../../Components/errorMessage/errorMessage'
+import * as SecureStore from 'expo-secure-store'
 
 interface LoginScreenProps {
     navigation: any
@@ -69,91 +42,69 @@ interface LoginScreenProps {
 }
 
 const LoginScreen = (props: LoginScreenProps) => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [isSignedIn, setIsSignedIn] = useState(false)
-    const [recoveryEmail, setRecoveryEmail] = useState('')
+    const [formError, setFormError] = useState(false)
+    // const dispatch = useDispatch()
+    // const selector = useSelector(
+    //     (state: any) => state.userLoginAndOut.isSignedIn
+    // )
 
-    // const login = () => props.navigation.navigate('Search')
+    async function save(key: string, value: string) {
+        await SecureStore.setItemAsync(key, value)
+    }
+
+    // const test = () => {
+    //     let email = SecureStore.getItemAsync('email')
+    //     let password = SecureStore.getItemAsync('password')
+    //     console.log(email, password)
+    // }
+    // useEffect(() => {
+    //     console.log('test')
+    //     let email = SecureStore.getItemAsync('email')
+    //     let password = SecureStore.getItemAsync('password')
+    //
+    //     console.log(email, password)
+    // }, [setFormError])
+
     const register = () => props.navigation.navigate('Register')
 
-    useEffect(() => {
-        if (props.loginState.isRecoveringPassword) {
-            props.showLoading()
-            AuthService.recoverPassword(recoveryEmail)
-                .then(() => {
-                    props.recoverPasswordSuccess()
-                    setTimeout(() => {
-                        props.hideLoading()
-                    }, 2000)
-                })
-                .catch((error) => {
-                    props.recoverPasswordFail(error)
-                })
-        } else {
-            props.hideLoading
-        }
-    }, [props.loginState.isRecoveringPassword])
-
-    const forgotEmailPassword = (email: string) => {
-        setRecoveryEmail(email)
-        props.recoverPassword()
-    }
-
-    const handleSignup = () => {
-        createUserWithEmailAndPassword(authentication, email, password)
-            .then((userCredentials) => {
-                // Signed in
-                setEmail('')
-                setPassword('')
-                console.log('registered with : ', userCredentials)
-                // ...
-            })
-            .catch((error) => {
-                const errorCode = error.code
-                const errorMessage = error.message
-                // ..
-            })
-    }
-
-    const login = (email: string, password: string) => {
+    const loginFromForm = (email: string, password: string) => {
         signInWithEmailAndPassword(authentication, email, password)
-            .then(() => {
-                setIsSignedIn(true)
-                console.log(isSignedIn)
+            .then(async () => {
+                store.dispatch(login())
                 props.navigation.navigate('Search')
+                await save('email', email)
+                await save('password', password)
+                setFormError(false)
             })
             .catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message
+                setFormError(true)
+                timedPasswordError()
             })
     }
 
-    const handleLoginWithRedux = (email: string, password: string) => {
-        props.loggingInWithRedux(email, password)
+    const timedPasswordError = () => {
+        setTimeout(() => {
+            setFormError(false)
+        }, 4500)
     }
 
-    const handleLogout = () => {
-        signOut(authentication)
-            .then(() => {
-                setIsSignedIn(false)
-            })
-            .catch((userCredentials) => {})
-    }
     return (
         <SafeAreaView style={loginStyle.content}>
             <View style={loginStyle.view}>
                 <PropertyLogo />
                 <Card>
                     <Card.Title
+                        titleNumberOfLines={2}
                         titleStyle={loginStyle.cardTitle}
-                        title="Property App"
+                        title="Welcome to Property Analyser"
                     ></Card.Title>
                     <Card.Content>
                         <Formik
                             initialValues={{ email: '', password: '' }}
-                            onSubmit={}
                             validationSchema={loginForm}
+                            onSubmit={() => {}}
                         >
                             {({
                                 handleSubmit,
@@ -174,6 +125,8 @@ const LoginScreen = (props: LoginScreenProps) => {
                                     {touched.email && errors.email ? (
                                         <Text
                                             style={{
+                                                padding: 1,
+                                                textAlign: 'center',
                                                 color: 'white',
                                                 backgroundColor: 'red',
                                             }}
@@ -185,6 +138,7 @@ const LoginScreen = (props: LoginScreenProps) => {
 
                                     <TextInput
                                         label="Password"
+                                        style={loginStyle.textInput}
                                         secureTextEntry={true}
                                         onChangeText={handleChange('password')}
                                         testID="password"
@@ -204,11 +158,10 @@ const LoginScreen = (props: LoginScreenProps) => {
                                         </Text>
                                     ) : null}
                                     <Button
-                                        onPress={() =>
-                                            forgotEmailPassword(values.email)
-                                        }
+                                        onPress={() => {}}
                                         style={loginStyle.cardButton}
                                         uppercase={false}
+                                        mode={'contained'}
                                         testID="recoveryButton"
                                         disabled={
                                             !!(
@@ -220,8 +173,15 @@ const LoginScreen = (props: LoginScreenProps) => {
                                         Forgot email/password
                                     </Button>
                                     <Button
+                                        color={'rgb(8,8,8)'}
                                         style={loginStyle.cardButton}
-                                        onPress={handleSubmit}
+                                        uppercase={false}
+                                        onPress={() =>
+                                            loginFromForm(
+                                                values.email,
+                                                values.password
+                                            )
+                                        }
                                         mode="contained"
                                         testID="loginButton"
                                     >
@@ -231,6 +191,7 @@ const LoginScreen = (props: LoginScreenProps) => {
                                         style={loginStyle.cardButton}
                                         onPress={register}
                                         uppercase={false}
+                                        mode={'contained'}
                                         testID="registerButton"
                                     >
                                         Register
@@ -238,29 +199,15 @@ const LoginScreen = (props: LoginScreenProps) => {
                                 </>
                             )}
                         </Formik>
+                        {formError
+                            ? errorMessage(
+                                  'Incorrect password or login details.',
+                                  'Please try again or reset password.'
+                              )
+                            : null}
                     </Card.Content>
                 </Card>
             </View>
-            {props.loginState.hasRecoveredPassword ? (
-                <Snackbar
-                    duration={3000}
-                    visible={true}
-                    onDismiss={() => props.recoveredPasswordReset()}
-                    testID="recoverPasswordSuccess"
-                >
-                    Recovery email sent
-                </Snackbar>
-            ) : null}
-            {props.loginState.error ? (
-                <Snackbar
-                    duration={3000}
-                    visible={true}
-                    onDismiss={() => props.recoveredPasswordReset()}
-                    testID="recoverPasswordFail"
-                >
-                    Recovery email sent
-                </Snackbar>
-            ) : null}
         </SafeAreaView>
     )
 }

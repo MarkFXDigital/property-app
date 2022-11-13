@@ -1,8 +1,8 @@
 import LoadingComponent from '../loading.component'
 import { render } from '@testing-library/react-native'
 import { Provider } from 'react-redux'
-import { store } from '../../../store/store'
-import { hide, show } from '../../../store/loading/loading.actions'
+import { store } from '../../../redux/reducerSlice/store'
+import { hide, show } from '../../../redux/loading/loading.actions'
 
 describe('loading effect component', () => {
     it('should hide loading component when not loading state is false', () => {

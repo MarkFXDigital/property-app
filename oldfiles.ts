@@ -38,3 +38,28 @@
 //
 //
 // </KeyboardAvoidingView>
+
+// use effect login
+
+// useEffect(() => {
+//     if (props.loginState.isRecoveringPassword) {
+//         props.showLoading()
+//         AuthService.recoverPassword(recoveryEmail)
+//             .then(() => {
+//                 props.recoverPasswordSuccess()
+//                 setTimeout(() => {
+//                     props.hideLoading()
+//                 }, 2000)
+//             })
+//             .catch((error) => {
+//                 props.recoverPasswordFail(error)
+//             })
+//     } else {
+//         props.hideLoading
+//     }
+// }, [props.loginState.isRecoveringPassword])
+//
+// const forgotEmailPassword = (email: string) => {
+//     setRecoveryEmail(email)
+//     props.recoverPassword()
+// }

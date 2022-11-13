@@ -2,13 +2,13 @@ import LoginScreen from '../LoginScreen'
 import { fireEvent, render, waitFor } from '@testing-library/react-native'
 import { loginForm } from '../login.form'
 import { Provider } from 'react-redux'
-import { store } from '../../../store/store'
+import { store } from '../../../redux/reducerSlice/store'
 import {
     recoverPassword,
     recoverPasswordFail,
     recoverPasswordReset,
     recoverPasswordSuccess,
-} from '../../../store/login/login.actions'
+} from '../../../redux/login/login.actions'
 
 describe('Login screen', function () {
     const renderLoginScreen = (navigation) => {
@@ -135,7 +135,7 @@ describe('Login screen', function () {
 
         await waitFor(() => {
             expect(store.getState().login.hasRecoveredPassword).toBeTruthy()
-            // expect(store.getState().loading.show).toBeFalsy()
+            // expect(redux.getState().loading.show).toBeFalsy()
             screen.getByTestId('recoverPasswordSuccess')
         })
     })
@@ -160,7 +160,7 @@ describe('Login screen', function () {
         await waitFor(() => {
             expect(store.getState().login.hasRecoveredPassword).toBeFalsy()
             expect(store.getState().login.error).not.toBeNull()
-            // expect(store.getState().loading.show).toBeFalsy()
+            // expect(redux.getState().loading.show).toBeFalsy()
             screen.getByTestId('recoverPasswordFail')
         })
     })

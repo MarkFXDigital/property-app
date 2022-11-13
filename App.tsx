@@ -1,6 +1,5 @@
-import React from 'react'
-import { StyleSheet } from 'react-native'
-import { LogBox } from 'react-native'
+import React, { useEffect } from 'react'
+import { LogBox, StyleSheet } from 'react-native'
 import { Provider as PaperProvider } from 'react-native-paper'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { theme } from './src/theme'
@@ -11,7 +10,7 @@ import { NavigationContainer } from '@react-navigation/native'
 //screens
 import LoginScreen from './src/Screens/Login/LoginScreen'
 import SearchScreen from './src/Screens/SearchScreen'
-import HelpScreen from './src/Screens/HelpScreen'
+import AccountScreen from './src/Screens/AccountScreen'
 
 //Price Search Screens
 import PriceSearchScreen from './src/Screens/PriceSearch/PriceSearchScreen'
@@ -28,52 +27,102 @@ import AvgRentsScreen from './src/Screens/Demand&Yield/Searches/AvgRentsScreen'
 import AreaStatisticsScreen from './src/Screens/AreaStatistics/AreaStatisticsScreen'
 import SocialPoliticsScreen from './src/Screens/AreaStatistics/Searches/SocialPoliticsScreen'
 import { RegisterScreen } from './src/Screens/Login/register/RegisterScreen'
-import { Provider } from 'react-redux'
-import { store } from './src/store/store'
-import LoadingComponent from './src/Components/loading/loading.component'
+import { Provider, useSelector } from 'react-redux'
+
+import { store } from './src/redux/reducerSlice/store'
+// import { helpStack as helpStack1 } from './src/navigation/AuthStackNavigation/AuthStackNavigation'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { authentication } from './firebase'
+import { login } from './src/redux/reducerSlice/slice'
+import * as SecureStore from 'expo-secure-store'
+import { checkLoggedIn } from './src/Screens/Login/AuthCheckBeforeLogin'
 
 // Stack Navigators
-const loginStack = createNativeStackNavigator()
-const searchStack = createNativeStackNavigator()
+const loggedInStack = createNativeStackNavigator()
+const notLoggedInStack = createNativeStackNavigator()
 const helpStack = createNativeStackNavigator()
+const AuthStack = createNativeStackNavigator()
 
-const LoginStackScreen = () => (
-    <loginStack.Navigator>
-        <loginStack.Screen name="Login" component={LoginScreen} />
-        <loginStack.Screen name="Register" component={RegisterScreen} />
-        <loginStack.Screen name="Search" component={SearchScreen} />
+const AuthStackScreen = () => {
+    const mainStack = createNativeStackNavigator()
+    const notLoggedInStack = createNativeStackNavigator()
+    let isLoggedIn = useSelector(
+        (state: any) => state.userLoginAndOut.isSignedIn
+    )
 
-        <loginStack.Screen name="Price Search" component={PriceSearchScreen} />
-        <loginStack.Screen name="Avg Price Search" component={AvgPriceSearch} />
-        <loginStack.Screen
-            name="5 Year Growth Search"
-            component={GrowthSearch}
-        />
-        <loginStack.Screen name="Sold Prices" component={SoldPrices} />
-        <loginStack.Screen name="Sold Price Data" component={SoldPriceData} />
+    return (
+        <AuthStack.Navigator>
+            <>
+                {!isLoggedIn ? (
+                    <>
+                        <mainStack.Screen
+                            name="Login"
+                            component={LoginScreen}
+                        />
+                        <mainStack.Screen
+                            name="Register"
+                            component={RegisterScreen}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <mainStack.Screen
+                            name="Search"
+                            component={SearchScreen}
+                        />
+                        <mainStack.Screen
+                            name="Price Search"
+                            component={PriceSearchScreen}
+                        />
+                        <mainStack.Screen
+                            name="Avg Price Search"
+                            component={AvgPriceSearch}
+                        />
+                        <mainStack.Screen
+                            name="5 Year Growth Search"
+                            component={GrowthSearch}
+                        />
+                        <mainStack.Screen
+                            name="Sold Prices"
+                            component={SoldPrices}
+                        />
+                        <mainStack.Screen
+                            name="Sold Price Data"
+                            component={SoldPriceData}
+                        />
 
-        <loginStack.Screen
-            name="Demand Yield"
-            component={DemandYieldSearchScreen}
-        />
-        <loginStack.Screen name="Average Rents" component={AvgRentsScreen} />
+                        <mainStack.Screen
+                            name="Demand Yield"
+                            component={DemandYieldSearchScreen}
+                        />
+                        <mainStack.Screen
+                            name="Average Rents"
+                            component={AvgRentsScreen}
+                        />
 
-        <loginStack.Screen
-            name="Area Statistics"
-            component={AreaStatisticsScreen}
-        />
-        <loginStack.Screen
-            name="Demographics"
-            component={SocialPoliticsScreen}
-        />
-    </loginStack.Navigator>
-)
+                        <mainStack.Screen
+                            name="Area Statistics"
+                            component={AreaStatisticsScreen}
+                        />
+                        <mainStack.Screen
+                            name="Demographics"
+                            component={SocialPoliticsScreen}
+                        />
+                    </>
+                )}
+            </>
+        </AuthStack.Navigator>
+    )
+}
 
-const HelpStackScreen = () => (
-    <helpStack.Navigator>
-        <helpStack.Screen name="Help" component={HelpScreen} />
-    </helpStack.Navigator>
-)
+// const HelpStackScreen = () => {
+//     return (
+//         <helpStack.Navigator>
+//             <helpStack.Screen name="Help" component={AccountScreen} />
+//
+//         </helpStack.Navigator>
+//     )
+// }
 
 // Initialized all Navigator
 const Tab = createBottomTabNavigator()
@@ -84,9 +133,13 @@ LogBox.ignoreLogs([
 ])
 
 export function AppTabsNavigation() {
+    const isLoggedIn = useSelector(
+        (state: any) => state.userLoginAndOut.isSignedIn
+    )
+
     return (
         <Tab.Navigator
-            initialRouteName="Home"
+            initialRouteName="Login"
             screenOptions={{
                 tabBarInactiveBackgroundColor: '#011f3b',
                 tabBarActiveBackgroundColor: '#032845',
@@ -98,10 +151,7 @@ export function AppTabsNavigation() {
                     color: theme.mainGold,
                     paddingBottom: 3,
                 },
-
                 tabBarStyle: {
-                    // height: 55,
-                    // position: "absolute",
                     bottom: 0,
                     left: 0,
                     right: 0,
@@ -116,45 +166,31 @@ export function AppTabsNavigation() {
         >
             <Tab.Screen
                 name="LoginStack"
-                component={LoginStackScreen}
+                component={AuthStackScreen}
                 options={{
-                    tabBarLabel: 'Login',
+                    tabBarLabel: 'Home',
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons
-                            name="login"
+                            name="home"
                             color={color}
                             size={29}
-                            style={{ marginTop: 1 }}
+                            style={{ paddingBottom: 5 }}
                         />
                     ),
                 }}
             />
-            {/* <Tab.Screen
-        name="SearchStack"
-        component={SearchStackScreen}
-        options={{
-          tabBarLabel: "Search",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons
-              name="home"
-              color={color}
-              size={29}
-              style={{ marginTop: 1 }}
-            />
-          ),
-        }}
-      /> */}
+
             <Tab.Screen
                 name="HelpStack"
-                component={HelpStackScreen}
+                component={AccountScreen}
                 options={{
-                    tabBarLabel: 'Help',
+                    tabBarLabel: 'Account',
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons
-                            name="person-add"
+                            name="account-circle"
                             color={color}
                             size={29}
-                            style={{ marginTop: 1 }}
+                            style={{ paddingBottom: 5 }}
                         />
                     ),
                 }}
@@ -163,14 +199,24 @@ export function AppTabsNavigation() {
     )
 }
 
-const App = () => {
+const App = (props: any) => {
+    const Stack = createNativeStackNavigator()
+
+    checkLoggedIn(props).then()
+    // const loginFromForm = (email: string, password: string) => {}
+
     return (
         <Provider store={store}>
             <PaperProvider theme={theme}>
                 <NavigationContainer>
-                    <AppTabsNavigation />
+                    <Stack.Navigator>
+                        <Stack.Screen
+                            name="Home"
+                            component={AppTabsNavigation}
+                            options={{ headerShown: false }}
+                        />
+                    </Stack.Navigator>
                 </NavigationContainer>
-                <LoadingComponent />
             </PaperProvider>
         </Provider>
     )

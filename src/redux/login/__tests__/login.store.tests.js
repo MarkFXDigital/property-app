@@ -7,7 +7,7 @@ import {
 } from '../login.actions'
 import { AppInitialState } from '../../../AppInitialState'
 
-describe('Login store', () => {
+describe('Login redux', () => {
     const initialState = {
         ...AppInitialState.login,
     }

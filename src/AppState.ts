@@ -1,5 +1,5 @@
-import { LoadingState } from './store/loading/LoadingState'
-import { LoggingInInfo, LoginState } from './store/login/LoginState'
+import { LoadingState } from './redux/loading/LoadingState'
+import { LoggingInInfo, LoginState } from './redux/login/LoginState'
 
 export interface AppState {
     loading: LoadingState

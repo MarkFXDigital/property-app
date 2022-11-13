@@ -1,21 +1,20 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React from 'react'
+import { View, Text, StyleSheet } from 'react-native'
 
 const boilerplate = () => {
-  return (
-    <View>
-      <Text>Change Me!</Text>
-    </View>
-  );
-};
+    return (
+        <View>
+            <Text>Change Me!</Text>
+        </View>
+    )
+}
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({})
 
 export default boilerplate
 
-
-
-{/* <VictoryChart
+{
+    /* <VictoryChart
 // width={moderateScale(320)}
 // height={moderateScaleVertical(220)}
 >
@@ -111,7 +110,7 @@ import {
 const SearchScreen = () => {
   // Tips State
   const [tips, setTips] = useState(false);
-  // To store response data
+  // To redux response data
   const [data, setData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -268,4 +267,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchScreen; */}
+export default SearchScreen; */
+}

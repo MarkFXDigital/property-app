@@ -5,41 +5,42 @@ import {
     Text,
     TouchableOpacity,
     ScrollView,
+    Dimensions,
     TextInput,
 } from 'react-native'
 import PropertyLogo from '../../../Components/PropertyLogo'
 import { FontAwesome } from '@expo/vector-icons'
 import { theme } from '../../../theme'
 import { Ionicons } from '@expo/vector-icons'
-import { barGraphRentsComponent } from '../../../Components/graphs/barGraphRents'
+import { lineGraphComponent } from '../../../Components/graphs/lineGraph/lineGraph'
 
-const AvgRentsScreen = () => {
+const GrowthSearch = () => {
     // On Screen State
     const [tips, setTips] = useState(false)
+    const [firstSearch, setFirstSearch] = useState(true)
     // To redux response data
-    const [data, setData] = useState([])
+    const [data, setData] = useState<any>([])
     const [isLoaded, setIsLoaded] = useState(false)
 
     // Search Params
     const [postcode, setPostcode] = useState('')
-    const [bedroomNum, setBedroomNum] = useState('')
 
     const fetchPriceSearch = async () => {
         try {
             const response = await fetch(
-                `https://api.propertydata.co.uk/rents?key=R1AGPYU2O1&postcode=${postcode}&bedrooms=${bedroomNum}`
+                `https://api.propertydata.co.uk/growth?key=R1AGPYU2O1&postcode=${postcode}`
             )
             const json = await response.json()
-            console.log(json.data['long_let']['70pc_range'][1])
+            console.log(json)
             setData(json)
             setIsLoaded(true)
         } catch (error) {
+            setIsLoaded(false)
             console.error(error)
         }
     }
 
     if (isLoaded) {
-        console.log(data.data['long_let']['70pc_range'][0])
         return (
             <ScrollView style={styles.scrollViewContainer}>
                 <View style={styles.mainContainer}>
@@ -67,7 +68,7 @@ const AvgRentsScreen = () => {
                     </TouchableOpacity>
 
                     <View style={styles.graphContainer}>
-                        {barGraphRentsComponent(data)}
+                        {lineGraphComponent(data)}
                         {tips && (
                             <View style={styles.tipContainer}>
                                 <TouchableOpacity
@@ -89,11 +90,20 @@ const AvgRentsScreen = () => {
                                     </Text>
                                 </TouchableOpacity>
                                 <Text style={styles.tipText}>
-                                    * Y axis is in hundreds
+                                    * Y axis is in thousands
                                 </Text>
                                 <Text style={styles.tipText}>
-                                    * X axis it the range in which values occur
-                                    within designated search area
+                                    First Year Growth{'  '} {data.data[1][2]}
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Second Year Growth{'  '} {data.data[2][2]}
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Third Year Growth{'  '} {data.data[3][2]}
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Fourth Year Growth{'  '}
+                                    {data.data[4][2]}
                                 </Text>
                             </View>
                         )}
@@ -104,17 +114,10 @@ const AvgRentsScreen = () => {
                         <TextInput
                             style={styles.input}
                             onChangeText={(val) => setPostcode(val)}
-                            value=""
-                            placeholderTextColor="black"
-                            placeHolder=" Please entered desired postcode "
+                            placeholder=" Please entered desired postcode "
+                            placeholderTextColor="grey"
                         />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={(val) => setBedroomNum(val)}
-                            placeHolder="Please enter number of bedrooms"
-                            value=""
-                            placeholderTextColor="black"
-                        />
+
                         <TouchableOpacity
                             onPress={fetchPriceSearch}
                             style={styles.button}
@@ -139,15 +142,10 @@ const AvgRentsScreen = () => {
                     <TextInput
                         style={styles.input}
                         onChangeText={(val) => setPostcode(val)}
-                        placeholder="Please entered desired postcode"
+                        placeholder=" Please entered desired postcode "
                         placeholderTextColor="grey"
                     />
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(val) => setBedroomNum(val)}
-                        placeholder="Please enter number of bedrooms"
-                        placeholderTextColor="grey"
-                    />
+
                     <TouchableOpacity
                         onPress={fetchPriceSearch}
                         style={styles.button}
@@ -212,11 +210,9 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
-        width: '80%',
         margin: 12,
         borderWidth: 1,
         padding: 10,
-        textAlign: 'center',
     },
     tipContainer: {
         alignItems: 'center',
@@ -226,4 +222,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default AvgRentsScreen
+export default GrowthSearch
