@@ -7,46 +7,59 @@ import {
     ScrollView,
     TextInput,
 } from 'react-native'
-import PropertyLogo from '../../../Components/PropertyLogo'
+import PropertyLogo from '../../../../Components/PropertyLogo'
 import { FontAwesome } from '@expo/vector-icons'
-import { theme } from '../../../theme'
+import { theme } from '../../../../theme'
 import { Ionicons } from '@expo/vector-icons'
-import { barGraphRentsComponent } from '../../../Components/graphs/barGraphRents'
+import { barGraphRentsComponent } from '../../../../Components/graphs/barGraphRents'
+import { errorMessage } from '../../../../Components/errorMessage/errorMessage'
+import { API_KEY, API_URL } from '@env'
 
 const AvgRentsScreen = () => {
     // On Screen State
     const [tips, setTips] = useState(false)
+
     // To redux response data
     const [data, setData] = useState([])
     const [isLoaded, setIsLoaded] = useState(false)
+
+    // Error handling
+    const [showSearchErrorPopup, setShowSearchErrorPopup] = useState(false)
+    const [searchErrorResponse, setSearchErrorResponse] = useState('')
 
     // Search Params
     const [postcode, setPostcode] = useState('')
     const [bedroomNum, setBedroomNum] = useState('')
 
     const fetchPriceSearch = async () => {
-        try {
-            const response = await fetch(
-                `https://api.propertydata.co.uk/rents?key=R1AGPYU2O1&postcode=${postcode}&bedrooms=${bedroomNum}`
-            )
-            const json = await response.json()
-            console.log(json.data['long_let']['70pc_range'][1])
-            setData(json)
-            setIsLoaded(true)
-        } catch (error) {
-            console.error(error)
-        }
+        const response = await fetch(
+            `https://${API_URL}/rents?key=${API_KEY}&postcode=${postcode}&bedrooms=${bedroomNum}`
+        )
+            .then(async (response) => {
+                const json = await response.json()
+                setData(json)
+                if (json['status'] === 'success') {
+                    setIsLoaded(true)
+                }
+                if (json['status'] === 'error') {
+                    setSearchErrorResponse(json['message'])
+                    setShowSearchErrorPopup(true)
+                }
+            })
+            .catch((error) => {
+                setSearchErrorResponse(error['message'])
+                setShowSearchErrorPopup(true)
+            })
     }
 
     if (isLoaded) {
-        console.log(data.data['long_let']['70pc_range'][0])
         return (
             <ScrollView style={styles.scrollViewContainer}>
                 <View style={styles.mainContainer}>
                     <PropertyLogo />
                     <Text style={styles.infoText}>
                         Welcome to Property Analyser your one stop shop for
-                        property Data.
+                        property data.
                     </Text>
                     <TouchableOpacity
                         onPress={() => {
@@ -89,10 +102,10 @@ const AvgRentsScreen = () => {
                                     </Text>
                                 </TouchableOpacity>
                                 <Text style={styles.tipText}>
-                                    * Y axis is in hundreds
+                                    * Y axis is monthy value in GBP
                                 </Text>
                                 <Text style={styles.tipText}>
-                                    * X axis it the range in which values occur
+                                    * X axis is the range in which values occur
                                     within designated search area
                                 </Text>
                             </View>
@@ -104,16 +117,16 @@ const AvgRentsScreen = () => {
                         <TextInput
                             style={styles.input}
                             onChangeText={(val) => setPostcode(val)}
-                            value=""
-                            placeholderTextColor="black"
-                            placeHolder=" Please entered desired postcode "
+                            onPressIn={() => setShowSearchErrorPopup(false)}
+                            placeholder="Please entere desired postcode"
+                            placeholderTextColor="grey"
                         />
                         <TextInput
                             style={styles.input}
                             onChangeText={(val) => setBedroomNum(val)}
-                            placeHolder="Please enter number of bedrooms"
-                            value=""
-                            placeholderTextColor="black"
+                            onPressIn={() => setShowSearchErrorPopup(false)}
+                            placeholder="Please enter number of bedrooms"
+                            placeholderTextColor="grey"
                         />
                         <TouchableOpacity
                             onPress={fetchPriceSearch}
@@ -122,6 +135,12 @@ const AvgRentsScreen = () => {
                             <Text style={styles.buttonText}>SEARCH</Text>
                         </TouchableOpacity>
                     </View>
+                    {showSearchErrorPopup
+                        ? errorMessage(
+                              searchErrorResponse,
+                              'Please ensure you have entered the correct details'
+                          )
+                        : null}
                 </View>
             </ScrollView>
         )
@@ -133,18 +152,20 @@ const AvgRentsScreen = () => {
 
                     <Text style={styles.infoText}>
                         Welcome to Property Analyser your one stop shop for
-                        property Data.
+                        property data.
                     </Text>
 
                     <TextInput
                         style={styles.input}
                         onChangeText={(val) => setPostcode(val)}
-                        placeholder="Please entered desired postcode"
+                        onPressIn={() => setShowSearchErrorPopup(false)}
+                        placeholder="Please enter desired postcode"
                         placeholderTextColor="grey"
                     />
                     <TextInput
                         style={styles.input}
                         onChangeText={(val) => setBedroomNum(val)}
+                        onPressIn={() => setShowSearchErrorPopup(false)}
                         placeholder="Please enter number of bedrooms"
                         placeholderTextColor="grey"
                     />
@@ -154,6 +175,12 @@ const AvgRentsScreen = () => {
                     >
                         <Text style={styles.buttonText}>SEARCH</Text>
                     </TouchableOpacity>
+                    {showSearchErrorPopup
+                        ? errorMessage(
+                              searchErrorResponse,
+                              'Please ensure you have entered the correct details'
+                          )
+                        : null}
                 </View>
             </ScrollView>
         )
@@ -181,7 +208,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         textAlign: 'center',
         marginTop: 10,
-        paddingBottom: 80,
     },
     infoText: {
         textAlign: 'center',
@@ -212,7 +238,7 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
-        width: '80%',
+        width: 250,
         margin: 12,
         borderWidth: 1,
         padding: 10,
@@ -223,6 +249,7 @@ const styles = StyleSheet.create({
     },
     tipText: {
         textAlign: 'center',
+        paddingHorizontal: 2,
     },
 })
 

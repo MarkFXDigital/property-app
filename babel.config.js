@@ -1,10 +1,19 @@
 module.exports = function (api) {
     api.cache(true)
     return {
-        presets: [
-            ['babel-preset-expo'],
-            ['module:metro-react-native-babel-preset'],
+        presets: ['babel-preset-expo'],
+        plugins: [
+            [
+                'dotenv-import',
+                {
+                    moduleName: '@env',
+                    path: '.env',
+                    blocklist: null,
+                    allowlist: null,
+                    safe: false,
+                    allowUndefined: false,
+                },
+            ],
         ],
-        plugins: [['react-native-paper/babel']],
     }
 }

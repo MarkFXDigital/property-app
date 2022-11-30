@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
     View,
     StyleSheet,
@@ -7,58 +7,59 @@ import {
     ScrollView,
     Dimensions,
     TextInput,
-    FlatList,
 } from 'react-native'
-import PropertyLogo from '../../../Components/PropertyLogo'
-import {
-    VictoryBar,
-    VictoryChart,
-    VictoryGroup,
-    VictoryAxis,
-} from 'victory-native'
+import PropertyLogo from '../../../../Components/PropertyLogo'
 import { FontAwesome } from '@expo/vector-icons'
-import { theme } from '../../../theme'
+import { theme } from '../../../../theme'
 import { Ionicons } from '@expo/vector-icons'
-import { barGraphComponent } from '../../../Components/graphs/barGraph'
+import { lineGraphComponent } from '../../../../Components/graphs/lineGraph/lineGraph'
+import { errorMessage } from '../../../../Components/errorMessage/errorMessage'
+import { API_KEY, API_URL } from '@env'
 
-const AvgPriceSearch = () => {
+const GrowthSearch = () => {
     // On Screen State
     const [tips, setTips] = useState(false)
-    const [firstSearch, setFirstSearch] = useState(true)
+    const [showSearchErrorPopup, setShowSearchErrorPopup] = useState(false)
+    const [searchErrorResponse, setSearchErrorResponse] = useState('')
     // To redux response data
     const [data, setData] = useState<any>([])
     const [isLoaded, setIsLoaded] = useState(false)
 
     // Search Params
     const [postcode, setPostcode] = useState('')
-    const [bedroomNum, setBedroomNum] = useState('')
 
     const fetchPriceSearch = async () => {
-        console.log('search pressed')
-        try {
-            const response = await fetch(
-                `https://api.propertydata.co.uk/prices?key=R1AGPYU2O1&postcode=${postcode}&bedrooms=${bedroomNum}`
-            )
+        await fetch(
+            `https://${API_URL}/growth?key=${API_KEY}&postcode=${postcode}`
+        )
+            .then(async (response) => {
+                const json = await response.json()
 
-            const json = await response.json()
-            console.log(json)
-
-            setData(json)
-            setIsLoaded(true)
-        } catch (error) {
-            console.error(error)
-        }
+                setData(json)
+                console.log(json)
+                console.log(json['status'])
+                console.log('in then', isLoaded)
+                if (json['status'] === 'success') {
+                    setIsLoaded(true)
+                }
+                if (json['status'] === 'error') {
+                    setSearchErrorResponse(json['message'])
+                    setShowSearchErrorPopup(true)
+                }
+            })
+            .catch((error) => {
+                console.log('we are in the catch test TEST', error)
+            })
     }
 
     if (isLoaded) {
-        console.log(isLoaded)
         return (
             <ScrollView style={styles.scrollViewContainer}>
                 <View style={styles.mainContainer}>
                     <PropertyLogo />
                     <Text style={styles.infoText}>
                         Welcome to Property Analyser your one stop shop for
-                        property Data.
+                        property data.
                     </Text>
                     <TouchableOpacity
                         onPress={() => {
@@ -79,16 +80,14 @@ const AvgPriceSearch = () => {
                     </TouchableOpacity>
 
                     <View style={styles.graphContainer}>
-                        {barGraphComponent(data)}
+                        {lineGraphComponent(data)}
                         {tips && (
                             <View style={styles.tipContainer}>
                                 <TouchableOpacity
                                     onPress={() => {
                                         if (!tips) {
-                                            console.log(tips)
                                             return setTips(true)
                                         } else if (tips) {
-                                            console.log(tips)
                                             return setTips(false)
                                         }
                                     }}
@@ -103,11 +102,20 @@ const AvgPriceSearch = () => {
                                     </Text>
                                 </TouchableOpacity>
                                 <Text style={styles.tipText}>
-                                    * Y axis is in thousands
+                                    * Y axis is in GBP
                                 </Text>
                                 <Text style={styles.tipText}>
-                                    * X axis it the range in which values occur
-                                    within designated search area
+                                    First Year Growth{'  '} {data.data[1][2]}
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Second Year Growth{'  '} {data.data[2][2]}
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Third Year Growth{'  '} {data.data[3][2]}
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Fourth Year Growth{'  '}
+                                    {data.data[4][2]}
                                 </Text>
                             </View>
                         )}
@@ -120,13 +128,9 @@ const AvgPriceSearch = () => {
                             onChangeText={(val) => setPostcode(val)}
                             placeholder=" Please entered desired postcode "
                             placeholderTextColor="grey"
+                            onPressIn={() => setShowSearchErrorPopup(false)}
                         />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={(val) => setBedroomNum(val)}
-                            placeholder="Please enter number of bedrooms"
-                            placeholderTextColor="grey"
-                        />
+
                         <TouchableOpacity
                             onPress={fetchPriceSearch}
                             style={styles.button}
@@ -134,6 +138,12 @@ const AvgPriceSearch = () => {
                             <Text style={styles.buttonText}>SEARCH</Text>
                         </TouchableOpacity>
                     </View>
+                    {showSearchErrorPopup
+                        ? errorMessage(
+                              searchErrorResponse,
+                              'Please ensure you have entered the correct details'
+                          )
+                        : null}
                 </View>
             </ScrollView>
         )
@@ -145,27 +155,29 @@ const AvgPriceSearch = () => {
 
                     <Text style={styles.infoText}>
                         Welcome to Property Analyser your one stop shop for
-                        property Data.
+                        property data.
                     </Text>
 
                     <TextInput
                         style={styles.input}
                         onChangeText={(val) => setPostcode(val)}
-                        placeholder="Please entered desired postcode "
+                        onPressIn={() => setShowSearchErrorPopup(false)}
+                        placeholder=" Please entered desired postcode "
                         placeholderTextColor="grey"
                     />
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(val) => setBedroomNum(val)}
-                        placeholder="Please enter number of bedrooms"
-                        placeholderTextColor="grey"
-                    />
+
                     <TouchableOpacity
                         onPress={fetchPriceSearch}
                         style={styles.button}
                     >
                         <Text style={styles.buttonText}>SEARCH</Text>
                     </TouchableOpacity>
+                    {showSearchErrorPopup
+                        ? errorMessage(
+                              searchErrorResponse,
+                              'Please ensure you have entered the correct details'
+                          )
+                        : null}
                 </View>
             </ScrollView>
         )
@@ -224,8 +236,6 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
-        width: '65%',
-        textAlign: 'center',
         margin: 12,
         borderWidth: 1,
         padding: 10,
@@ -238,4 +248,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default AvgPriceSearch
+export default GrowthSearch

@@ -7,11 +7,11 @@ import {
 import { theme } from '../../theme'
 import React from 'react'
 import { Dimensions } from 'react-native'
-import { barGraphStyles } from './barGraph.styles'
 
 export const barGraphRentsComponent = (data: any) => {
     const chartHeight = Dimensions.get('window').height * 0.4
     const chartWidth = Dimensions.get('window').width
+    const weeksToMonthsMultipler: number = 4.33
 
     return (
         <VictoryChart
@@ -24,19 +24,27 @@ export const barGraphRentsComponent = (data: any) => {
                     data={[
                         {
                             x: 1,
-                            y: data.data['long_let']['70pc_range'][0],
+                            y:
+                                data.data['long_let']['70pc_range'][0] *
+                                weeksToMonthsMultipler,
                         },
                         {
                             x: 2,
-                            y: data.data['long_let']['80pc_range'][0],
+                            y:
+                                data.data['long_let']['80pc_range'][0] *
+                                weeksToMonthsMultipler,
                         },
                         {
                             x: 3,
-                            y: data.data['long_let']['90pc_range'][0],
+                            y:
+                                data.data['long_let']['90pc_range'][0] *
+                                weeksToMonthsMultipler,
                         },
                         {
                             x: 4,
-                            y: data.data['long_let']['100pc_range'][0],
+                            y:
+                                data.data['long_let']['100pc_range'][0] *
+                                weeksToMonthsMultipler,
                         },
                     ]}
                     animate={{
@@ -56,19 +64,27 @@ export const barGraphRentsComponent = (data: any) => {
                     data={[
                         {
                             x: 1,
-                            y: data.data['long_let']['70pc_range'][1],
+                            y:
+                                data.data['long_let']['70pc_range'][1] *
+                                weeksToMonthsMultipler,
                         },
                         {
                             x: 2,
-                            y: data.data['long_let']['80pc_range'][1],
+                            y:
+                                data.data['long_let']['80pc_range'][1] *
+                                weeksToMonthsMultipler,
                         },
                         {
                             x: 3,
-                            y: data.data['long_let']['90pc_range'][1],
+                            y:
+                                data.data['long_let']['90pc_range'][1] *
+                                weeksToMonthsMultipler,
                         },
                         {
                             x: 4,
-                            y: data.data['long_let']['100pc_range'][1],
+                            y:
+                                data.data['long_let']['100pc_range'][1] *
+                                weeksToMonthsMultipler,
                         },
                     ]}
                     animate={{

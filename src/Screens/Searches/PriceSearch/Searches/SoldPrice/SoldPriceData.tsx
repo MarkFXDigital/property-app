@@ -1,17 +1,17 @@
 import React from 'react'
-import { View, Text, StyleSheet, FlatList } from 'react-native'
-import SoldPriceCard from '../../../../Components/SoldPricesCard'
-import MapView from 'react-native-maps'
+import { View, StyleSheet, FlatList } from 'react-native'
+import SoldPriceCard from '../../../../../Components/SoldPricesCard'
+import MapView, { Marker } from 'react-native-maps'
 import { Dimensions } from 'react-native'
 
-const SoldPriceData = ({ route, navigation }) => {
+const SoldPriceData = ({ route }: any) => {
     const { data } = route.params
     const { height, width } = Dimensions.get('window')
 
     const LATITUDE_DELTA = 0.005
     const LONGITUDE_DELTA = LATITUDE_DELTA * (width / height)
 
-    const renderItem = ({ item }) => (
+    const renderItem = ({ item }: any) => (
         <View style={styles.cardContainer}>
             <SoldPriceCard
                 cardTitle="Property Info"
@@ -26,7 +26,6 @@ const SoldPriceData = ({ route, navigation }) => {
 
             <View>
                 <MapView
-                    nestedScrollEnabled={true}
                     style={{
                         width: '100%',
                         height: 150,
@@ -40,9 +39,8 @@ const SoldPriceData = ({ route, navigation }) => {
                         longitudeDelta: LONGITUDE_DELTA,
                     }}
                 >
-                    <MapView.Marker
+                    <Marker
                         tracksViewChanges={false}
-                        optimizeWaypoints={true}
                         coordinate={{
                             latitude: Number(item.lat),
                             longitude: Number(item.lng),

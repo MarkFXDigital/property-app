@@ -13,19 +13,19 @@ import SearchScreen from './src/Screens/SearchScreen'
 import AccountScreen from './src/Screens/AccountScreen'
 
 //Price Search Screens
-import PriceSearchScreen from './src/Screens/PriceSearch/PriceSearchScreen'
-import AvgPriceSearch from './src/Screens/PriceSearch/Searches/AvgPriceSearch'
-import GrowthSearch from './src/Screens/PriceSearch/Searches/GrowthSearch'
-import SoldPrices from './src/Screens/PriceSearch/Searches/SoldPrice/SoldPrices'
-import SoldPriceData from './src/Screens/PriceSearch/Searches/SoldPrice/SoldPriceData'
+import PriceSearchScreen from './src/Screens/Searches/PriceSearch/PriceSearchScreen'
+import AvgPriceSearch from './src/Screens/Searches/PriceSearch/Searches/AvgPriceSearch'
+import GrowthSearch from './src/Screens/Searches/PriceSearch/Searches/GrowthSearch'
+import SoldPrices from './src/Screens/Searches/PriceSearch/Searches/SoldPrice/SoldPrices'
+import SoldPriceData from './src/Screens/Searches/PriceSearch/Searches/SoldPrice/SoldPriceData'
 
 //Demand Yield Screens
-import DemandYieldSearchScreen from './src/Screens/Demand&Yield/DemandYieldScreen'
-import AvgRentsScreen from './src/Screens/Demand&Yield/Searches/AvgRentsScreen'
+import DemandYieldSearchScreen from './src/Screens/Searches/Demand&Yield/DemandYieldScreen'
+import AvgRentsScreen from './src/Screens/Searches/Demand&Yield/Searches/AvgRentsScreen'
 
 // Area Statistic Screens
-import AreaStatisticsScreen from './src/Screens/AreaStatistics/AreaStatisticsScreen'
-import SocialPoliticsScreen from './src/Screens/AreaStatistics/Searches/SocialPoliticsScreen'
+import AreaStatisticsScreen from './src/Screens/Searches/AreaStatistics/AreaStatisticsScreen'
+import SocialPoliticsScreen from './src/Screens/Searches/AreaStatistics/Searches/SocialPoliticsScreen'
 import { RegisterScreen } from './src/Screens/Login/register/RegisterScreen'
 import { Provider, useSelector } from 'react-redux'
 
@@ -36,6 +36,7 @@ import { authentication } from './firebase'
 import { login } from './src/redux/reducerSlice/slice'
 import * as SecureStore from 'expo-secure-store'
 import { checkLoggedIn } from './src/Screens/Login/AuthCheckBeforeLogin'
+import { ForgotPasswordScreen } from './src/Screens/Login/forgotPassword/ForgotPasswordScreen'
 
 // Stack Navigators
 const loggedInStack = createNativeStackNavigator()
@@ -62,6 +63,10 @@ const AuthStackScreen = () => {
                         <mainStack.Screen
                             name="Register"
                             component={RegisterScreen}
+                        />
+                        <mainStack.Screen
+                            name="Forgot Password"
+                            component={ForgotPasswordScreen}
                         />
                     </>
                 ) : (
@@ -114,15 +119,6 @@ const AuthStackScreen = () => {
         </AuthStack.Navigator>
     )
 }
-
-// const HelpStackScreen = () => {
-//     return (
-//         <helpStack.Navigator>
-//             <helpStack.Screen name="Help" component={AccountScreen} />
-//
-//         </helpStack.Navigator>
-//     )
-// }
 
 // Initialized all Navigator
 const Tab = createBottomTabNavigator()

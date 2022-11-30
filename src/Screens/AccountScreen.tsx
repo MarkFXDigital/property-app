@@ -4,37 +4,40 @@ import PropertyLogo from '../Components/PropertyLogo'
 import { GeneralButton } from '../Components/buttons/SubmitButton'
 import { getAuth, signOut } from 'firebase/auth'
 import * as SecureStore from 'expo-secure-store'
+import { checkLoggedIn } from './Login/AuthCheckBeforeLogin'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { logout } from '../redux/reducerSlice/slice'
+import { store } from '../redux/reducerSlice/store'
 import { useSelector } from 'react-redux'
-import { LoadingState } from '../redux/loading/LoadingState'
-import { LoginState } from '../redux/login/LoginState'
 
 interface LoginScreenProps {
     navigation: any
 }
-const AccountScreen = (props: LoginScreenProps) => {
+const AccountScreen = (props: any) => {
+    let isLoggedIn = useSelector(
+        (state: any) => state.userLoginAndOut.isSignedIn
+    )
     const submitFeedbackForm = () => {}
 
-    const sendToLoginScreen = () => {
-        props.navigation.navigate('LoginStack', { screen: 'Login' })
-    }
-
-    const submitLogout = async (props: LoginScreenProps) => {
+    const submitLogout = () => {
         const auth = getAuth()
         signOut(auth)
-            .then(() => {
-                SecureStore.deleteItemAsync('email')
-                SecureStore.deleteItemAsync('password')
-                sendToLoginScreen()
+            .then(async () => {
+                store.dispatch(logout())
+                await SecureStore.deleteItemAsync('email')
+                await SecureStore.deleteItemAsync('password')
+                checkLoggedIn(props)
+                // sendToLoginScreen()
             })
 
             .catch((error) => {
                 // An error happened.
             })
+        console.log(isLoggedIn, 'is logged in acc screen')
     }
 
-    // @ts-ignore
     return (
-        <View style={styles.mainContainer}>
+        <SafeAreaView style={styles.mainContainer}>
             <PropertyLogo />
 
             <Text style={styles.inputLabels}>Full Name:</Text>
@@ -63,7 +66,7 @@ const AccountScreen = (props: LoginScreenProps) => {
                 title={'Logout'}
                 marginTop={15}
             />
-        </View>
+        </SafeAreaView>
     )
 }
 

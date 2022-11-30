@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
     View,
     StyleSheet,
@@ -8,7 +8,7 @@ import {
     Dimensions,
     TextInput,
 } from 'react-native'
-import PropertyLogo from '../../../Components/PropertyLogo'
+import PropertyLogo from '../../../../Components/PropertyLogo'
 import {
     VictoryPie,
     VictoryChart,
@@ -16,9 +16,10 @@ import {
     VictoryAxis,
 } from 'victory-native'
 import { FontAwesome } from '@expo/vector-icons'
-import { theme } from '../../../theme'
+import { theme } from '../../../../theme'
 import { Ionicons } from '@expo/vector-icons'
-import { API_KEY } from '../../../API/api'
+import { errorMessage } from '../../../../Components/errorMessage/errorMessage'
+import { API_KEY, API_URL } from '@env'
 
 const SocialPoliticsScreen = () => {
     // On Screen State
@@ -31,35 +32,46 @@ const SocialPoliticsScreen = () => {
 
     // Search Params
     const [postcode, setPostcode] = useState('')
-    const [bedroomNum, setBedroomNum] = useState('')
 
-    const chartHeight = Dimensions.get('window').height * 0.6
+    // Error handling
+    const [showSearchErrorPopup, setShowSearchErrorPopup] = useState(false)
+    const [searchErrorResponse, setSearchErrorResponse] = useState('')
+
+    const chartHeight = Dimensions.get('window').height * 0.56
     const chartWidth = Dimensions.get('window').width
 
     const fetchPriceSearch = async () => {
-        try {
-            const response = await fetch(
-                `https://api.propertydata.co.uk/demographics?key=${API_KEY}&postcode=${postcode}`
-            )
-            const json = await response.json()
+        const response = await fetch(
+            `https://${API_URL}/demographics?key=${API_KEY}&postcode=${postcode}`
+        )
+            .then(async (response) => {
+                const json = await response.json()
 
-            setData(json)
-            setIsLoaded(true)
-        } catch (error) {
-            console.error(error)
-        }
+                setData(json)
+
+                if (json['status'] === 'success') {
+                    setIsLoaded(true)
+                    console.log(data)
+                }
+                if (json['status'] === 'error') {
+                    setSearchErrorResponse(json['message'])
+                    setShowSearchErrorPopup(true)
+                }
+            })
+            .catch((error) => {
+                setSearchErrorResponse(error['message'])
+                setShowSearchErrorPopup(true)
+            })
     }
-    console.log(data)
 
     if (isLoaded) {
-        console.log(data.data['commute_method'])
         return (
             <ScrollView style={styles.scrollViewContainer}>
                 <View style={styles.mainContainer}>
                     <PropertyLogo />
                     <Text style={styles.infoText}>
                         Welcome to Property Analyser your one stop shop for
-                        property Data.
+                        property data.
                     </Text>
                     <TouchableOpacity
                         onPress={() => {
@@ -90,7 +102,6 @@ const SocialPoliticsScreen = () => {
                                 left: 70,
                                 bottom: 0,
                                 right: 50,
-                                top: 40,
                             }}
                         >
                             <VictoryLegend
@@ -118,55 +129,53 @@ const SocialPoliticsScreen = () => {
                                         name: 'Greens',
                                         symbol: { fill: 'green' },
                                     },
-
-                                    {
-                                        name: 'Brexit Party',
-                                        symbol: { fill: '#ADD8E6' },
-                                    },
                                 ]}
                             />
                             <VictoryPie
-                                // style={{
-                                //   data: { fillOpacity: 0.3, stroke: "black", strokeWidth: 1 },
-                                // }}
-                                colorScale={[
-                                    'red',
-                                    '#0087DC',
-                                    'gold',
-                                    '#FDBB30',
-                                    'green',
-                                    '#ADD8E6.',
-                                ]}
+                                style={{
+                                    data: {
+                                        stroke: 'black',
+                                        strokeWidth: 0.5,
+                                    },
+                                }}
+                                colorScale={['red', '#0087DC', 'gold', 'green']}
                                 labels={() => null}
                                 data={[
                                     {
-                                        y: data.data['politics']['results'][
-                                            'Labour'
-                                        ],
+                                        x: 'Labour',
+                                        y: Number(
+                                            data.data['politics']['results'][
+                                                'Labour'
+                                            ].slice(0, -1)
+                                        ),
                                     },
                                     {
-                                        y: data.data['politics']['results'][
-                                            'Conservative'
-                                        ],
-                                    },
+                                        x: 'Conservative',
 
-                                    {
-                                        // x: "Liberal Democrat",
-                                        y: data.data['politics']['results'][
-                                            'Liberal Democrat'
-                                        ],
+                                        y: Number(
+                                            data.data['politics']['results'][
+                                                'Conservative'
+                                            ].slice(0, -1)
+                                        ),
                                     },
                                     {
-                                        // x: "Green",
-                                        y: data.data['politics']['results'][
-                                            'Green'
-                                        ],
-                                    },
+                                        x: 'Liberal Democrats',
 
-                                    //   {
-                                    //     // x: "Brexit Party",
-                                    //     y: data.data["politics"]["results"]["Brexit Party"],
-                                    //   },
+                                        y: Number(
+                                            data.data['politics']['results'][
+                                                'Liberal Democrat'
+                                            ].slice(0, -1)
+                                        ),
+                                    },
+                                    {
+                                        x: 'Greens',
+
+                                        y: Number(
+                                            data.data['politics']['results'][
+                                                'Green'
+                                            ].slice(0, -1)
+                                        ),
+                                    },
                                 ]}
                             />
 
@@ -178,17 +187,73 @@ const SocialPoliticsScreen = () => {
                                 }}
                             />
                         </VictoryChart>
-                        <TouchableOpacity
-                            style={styles.secondTipContainer}
-                            onPress={() => {
-                                if (!tips) {
-                                    return setTips(true)
-                                } else if (tips) {
-                                    return setTips(false)
-                                }
+                        {tips && (
+                            <View style={styles.tipContainer}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        if (!tips) {
+                                            console.log(tips)
+                                            return setTips(true)
+                                        } else if (tips) {
+                                            console.log(tips)
+                                            return setTips(false)
+                                        }
+                                    }}
+                                >
+                                    <Text style={styles.tipText}>
+                                        Tips{' '}
+                                        <Ionicons
+                                            name="help-circle"
+                                            size={22}
+                                            color="black"
+                                        />
+                                    </Text>
+                                </TouchableOpacity>
+                                <Text style={styles.tipText}>
+                                    Percentage of votes as follows:
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Labour -
+                                    {data.data['politics']['results']['Labour']}
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Conservative -{' '}
+                                    {
+                                        data.data['politics']['results'][
+                                            'Conservative'
+                                        ]
+                                    }
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Liberal Democrat -
+                                    {
+                                        data.data['politics']['results'][
+                                            'Liberal Democrat'
+                                        ]
+                                    }
+                                </Text>
+                                <Text style={styles.tipText}>
+                                    Greens -{' '}
+                                    {data.data['politics']['results']['Green']}
+                                </Text>
+                            </View>
+                        )}
+                        <View
+                            style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
                             }}
                         >
-                            <View style={styles.questionIcon}>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    width: '100%',
+                                    marginBottom: 5,
+                                    marginLeft: 20,
+                                }}
+                            >
                                 <Text style={styles.secondGraphTitle}>
                                     Transport Methods
                                 </Text>
@@ -197,9 +262,17 @@ const SocialPoliticsScreen = () => {
                                     size={24}
                                     color="black"
                                 />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        if (!tips) {
+                                            return setTips(true)
+                                        } else if (tips) {
+                                            return setTips(false)
+                                        }
+                                    }}
+                                ></TouchableOpacity>
                             </View>
-                        </TouchableOpacity>
-
+                        </View>
                         <VictoryChart
                             height={chartHeight}
                             width={chartWidth}
@@ -207,7 +280,6 @@ const SocialPoliticsScreen = () => {
                                 left: 70,
                                 bottom: 0,
                                 right: 50,
-                                top: 40,
                             }}
                         >
                             <VictoryLegend
@@ -251,7 +323,6 @@ const SocialPoliticsScreen = () => {
                                 ]}
                             />
 
-                            {/* Second Pie Chart --- Commute Method */}
                             <VictoryPie
                                 colorScale={[
                                     '#f72119',
@@ -268,48 +339,71 @@ const SocialPoliticsScreen = () => {
                                 labels={() => null}
                                 data={[
                                     {
-                                        y: data.data['commute_method'][
-                                            'at_home'
-                                        ],
+                                        y: Number(
+                                            data.data['commute_method'][
+                                                'at_home'
+                                            ]
+                                        ),
                                     },
                                     {
-                                        y: data.data['commute_method'][
-                                            'bicycle'
-                                        ],
+                                        y: Number(
+                                            data.data['commute_method'][
+                                                'bicycle'
+                                            ]
+                                        ),
                                     },
                                     {
-                                        y: data.data['commute_method']['bus'],
+                                        y: Number(
+                                            data.data['commute_method']['bus']
+                                        ),
                                     },
                                     {
                                         y:
+                                            Number(
+                                                data.data['commute_method'][
+                                                    'car_driver'
+                                                ]
+                                            ) +
+                                            Number(
+                                                data.data['commute_method'][
+                                                    'car_passenger'
+                                                ]
+                                            ),
+                                    },
+                                    {
+                                        y: Number(
+                                            data.data['commute_method']['foot']
+                                        ),
+                                    },
+                                    {
+                                        y: Number(
                                             data.data['commute_method'][
-                                                'car_driver'
-                                            ] +
+                                                'motorcycle'
+                                            ]
+                                        ),
+                                    },
+
+                                    {
+                                        y: Number(
+                                            data.data['commute_method']['taxi']
+                                        ),
+                                    },
+                                    {
+                                        y: Number(
+                                            data.data['commute_method']['train']
+                                        ),
+                                    },
+                                    {
+                                        y: Number(
                                             data.data['commute_method'][
-                                                'car_passenger'
-                                            ],
+                                                'underground_light_rail'
+                                            ]
+                                        ),
                                     },
                                     {
-                                        y: data.data['commute_method']['foot'],
-                                    },
-                                    {
-                                        y: data.data['commute_method'][
-                                            'motorcycle'
-                                        ],
-                                    },
-                                    {
-                                        y: data.data['commute_method']['other'],
-                                    },
-                                    {
-                                        y: data.data['commute_method']['taxi'],
-                                    },
-                                    {
-                                        y: data.data['commute_method']['train'],
-                                    },
-                                    {
-                                        y: data.data['commute_method'][
-                                            'underground_light_rail'
-                                        ],
+                                        y: Number(
+                                            data.data['commute_method']['other']
+                                        ),
                                     },
                                 ]}
                             />
@@ -416,6 +510,12 @@ const SocialPoliticsScreen = () => {
                             <Text style={styles.buttonText}>SEARCH</Text>
                         </TouchableOpacity>
                     </View>
+                    {showSearchErrorPopup
+                        ? errorMessage(
+                              searchErrorResponse,
+                              'Please ensure you have entered the correct details'
+                          )
+                        : null}
                 </View>
             </ScrollView>
         )
@@ -427,7 +527,7 @@ const SocialPoliticsScreen = () => {
 
                     <Text style={styles.infoText}>
                         Welcome to Property Analyser your one stop shop for
-                        property Data.
+                        property data.
                     </Text>
 
                     <TextInput
@@ -443,6 +543,12 @@ const SocialPoliticsScreen = () => {
                     >
                         <Text style={styles.buttonText}>SEARCH</Text>
                     </TouchableOpacity>
+                    {showSearchErrorPopup
+                        ? errorMessage(
+                              searchErrorResponse,
+                              'Please ensure you have entered the correct details'
+                          )
+                        : null}
                 </View>
             </ScrollView>
         )
@@ -457,8 +563,8 @@ const styles = StyleSheet.create({
     },
     mainContainer: {
         flex: 1,
+        marginTop: 30,
         flexDirection: 'column',
-        marginTop: 50,
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
@@ -498,11 +604,22 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
     },
+    questionIconSecond: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        alignSelf: 'flex-end',
+        marginBottom: 10,
+        marginTop: 10,
+    },
     graphContainer: {
         width: '100%',
-        marginTop: 20,
+        // marginTop: 20,
     },
     secondTipContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
         marginRight: 10,
     },
     button: {
@@ -523,6 +640,8 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     tipContainer: {
+        marginTop: -60,
+        marginBottom: 20,
         alignItems: 'center',
     },
     tipText: {

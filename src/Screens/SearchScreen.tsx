@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
     View,
     Text,
@@ -18,14 +18,20 @@ import homeImageTwo from '../Assets/Images/home-two.jpg'
 import homeImageThree from '../Assets/Images/home-three.jpg'
 
 import { useSelector } from 'react-redux'
-import * as SecureStore from 'expo-secure-store'
-import { checkLoggedIn } from './Login/AuthCheckBeforeLogin'
 
 const SearchScreen = (props: any) => {
-    const selector = useSelector(
+    let isLoggedIn = useSelector(
         (state: any) => state.userLoginAndOut.isSignedIn
     )
-    checkLoggedIn(props)
+
+    const isLoggedInCheck = () => {
+        if (!isLoggedIn) {
+            props.navigation.navigate('LoginStack', { screen: 'Login' })
+        }
+        return
+    }
+
+    isLoggedInCheck()
 
     return (
         <ScrollView contentContainerStyle={styles.mainContainer}>
@@ -71,6 +77,19 @@ const SearchScreen = (props: any) => {
                         </ImageBackground>
                     </View>
                 </TouchableOpacity>
+                <TouchableOpacity>
+                    <View style={styles.imageContainer}>
+                        <ImageBackground
+                            source={homeImageThree}
+                            style={styles.images}
+                            imageStyle={{ opacity: 0.4, borderRadius: 25 }}
+                        >
+                            <Text style={styles.imageTextComingSoon}>
+                                Coming soon! Sourced Properties
+                            </Text>
+                        </ImageBackground>
+                    </View>
+                </TouchableOpacity>
             </View>
         </ScrollView>
     )
@@ -103,6 +122,14 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         fontSize: 18,
+    },
+    imageTextComingSoon: {
+        color: 'white',
+        fontWeight: 'bold',
+        paddingHorizontal: 4,
+        fontSize: 16,
+        opacity: 0.5,
+        textAlign: 'center',
     },
 })
 

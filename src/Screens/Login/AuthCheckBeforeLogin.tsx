@@ -7,7 +7,7 @@ import { login } from '../../redux/reducerSlice/slice'
 export const checkLoggedIn = async (props: any) => {
     let email: any | null = await SecureStore.getItemAsync('email')
     let password: any | null = await SecureStore.getItemAsync('password')
-    if (email.length > 0 || (!email === null && password?.length > 0)) {
+    if (email && password) {
         signInWithEmailAndPassword(authentication, email, password)
             .then(async () => {
                 store.dispatch(login())
@@ -16,8 +16,9 @@ export const checkLoggedIn = async (props: any) => {
             .catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message
+                return
             })
     } else {
-        props.navigation.navigate('LoginStack', { screen: 'Login' })
+        await props.navigation.navigate('LoginStack', { screen: 'Login' })
     }
 }

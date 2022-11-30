@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import {
+    createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
+} from 'firebase/auth'
 import { authentication } from '../../../../firebase'
 import { SafeAreaView, ScrollView, Text, View } from 'react-native'
 import { loginStyle } from '../login.style'
@@ -7,78 +10,35 @@ import { Button, Card, TextInput } from 'react-native-paper'
 import { registerStyle } from './register.style'
 import { Formik } from 'formik'
 import { loginForm } from '../login.form'
+import PropertyLogo from '../../../Components/PropertyLogo'
 import { errorMessage } from '../../../Components/errorMessage/errorMessage'
 
-export const RegisterScreen = () => {
-    // const [email, setEmail] = useState('')
-    // const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [approvedPassword, setApprovedPassword] = useState('')
+export const ForgotPasswordScreen = () => {
+    const [confirmPassword, setConfirmPassword] = useState(false)
     const [passwordErrorMessage, setPasswordErrorMessage] = useState(false)
+    const [formError, setFormError] = useState(false)
 
-    const handleSignup = (email: string, password: string) => {
-        // if (password === confirmPassword) {
-        //     setApprovedPassword(password)
-        // }
-
-        console.log(email, password)
-
-        createUserWithEmailAndPassword(authentication, email, password)
-            .then((userCredentials) => {
-                console.log('registered with : ', userCredentials)
+    const handleForgotPassword = (email: string) => {
+        sendPasswordResetEmail(authentication, email)
+            .then(() => {
+                setConfirmPassword(true)
             })
             .catch((error) => {
                 const errorCode = error.code
-                const errorMessage = error.message
-                alert(errorCode)
+                setFormError(true)
             })
     }
 
     return (
-        <SafeAreaView style={loginStyle.content}>
+        <SafeAreaView>
             <ScrollView>
                 <View style={registerStyle.content}>
-                    {/*<Form>*/}
-                    {/*    <TextInput label="Email" keyboardType="email-address" />*/}
-                    {/*    <TextInput*/}
-                    {/*        label="Password"*/}
-                    {/*        secureTextEntry={true}*/}
-                    {/*        onChangeText={(password) => setPassword(password)}*/}
-                    {/*        right={*/}
-                    {/*            <TextInput.Icon*/}
-                    {/*                name="eye-off-outline"*/}
-                    {/*                color={registerStyle.icon.color}*/}
-                    {/*            />*/}
-                    {/*        }*/}
-                    {/*    />*/}
-                    {/*    <TextInput*/}
-                    {/*        label="Confirm Password"*/}
-                    {/*        secureTextEntry={false}*/}
-                    {/*        onChangeText={(password) =>*/}
-                    {/*            setConfirmPassword(password)*/}
-                    {/*        }*/}
-                    {/*        right={*/}
-                    {/*            <TextInput.Icon*/}
-                    {/*                name="eye-off-outline"*/}
-                    {/*                color={registerStyle.icon.color}*/}
-                    {/*            />*/}
-                    {/*        }*/}
-                    {/*    />*/}
-                    {/*    {passwordErrorMessage*/}
-                    {/*        ? errorMessage(*/}
-                    {/*              'Password are not the same',*/}
-                    {/*              'Please make sure passwords match'*/}
-                    {/*          )*/}
-                    {/*        : null}*/}
-                    {/*    <Button style={registerStyle.button} mode="contained">*/}
-                    {/*        Register*/}
-                    {/*    </Button>*/}
-                    {/*</Form>*/}
                     <Card>
                         <Card.Title
                             titleStyle={loginStyle.cardTitle}
-                            title="Property App"
+                            title=""
                         ></Card.Title>
+                        <PropertyLogo />
                         <Card.Content>
                             <Formik
                                 initialValues={{
@@ -101,6 +61,9 @@ export const RegisterScreen = () => {
                                             label="Email"
                                             keyboardType="email-address"
                                             onChangeText={handleChange('email')}
+                                            onPressOut={() =>
+                                                setFormError(false)
+                                            }
                                             testID="email"
                                             onFocus={() =>
                                                 setFieldTouched('email')
@@ -120,30 +83,6 @@ export const RegisterScreen = () => {
                                             </Text>
                                         ) : null}
 
-                                        <TextInput
-                                            label="Password"
-                                            secureTextEntry={true}
-                                            onChangeText={handleChange(
-                                                'password'
-                                            )}
-                                            testID="password"
-                                            onFocus={() =>
-                                                setFieldTouched('password')
-                                            }
-                                        />
-                                        <TextInput
-                                            label="Confirm Password"
-                                            secureTextEntry={true}
-                                            onChangeText={() =>
-                                                setConfirmPassword(
-                                                    values.confirmPassword
-                                                )
-                                            }
-                                            testID="password"
-                                            onFocus={() =>
-                                                setFieldTouched('password')
-                                            }
-                                        />
                                         {touched.password && errors.password ? (
                                             <Text
                                                 style={{
@@ -160,18 +99,17 @@ export const RegisterScreen = () => {
                                             mode="contained"
                                             testID="loginButton"
                                             onPress={() =>
-                                                handleSignup(
-                                                    values.email,
-                                                    values.password
+                                                handleForgotPassword(
+                                                    values.email
                                                 )
                                             }
                                         >
-                                            Register
+                                            Reset Password
                                         </Button>
                                     </>
                                 )}
                             </Formik>
-                            {passwordErrorMessage
+                            {formError
                                 ? errorMessage(
                                       'Incorrect password or login details.',
                                       'Please try again or reset password.'

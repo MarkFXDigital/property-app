@@ -21,8 +21,11 @@ const userLoginAndOutReducer = createSlice({
         login(state, action: PayloadAction<void>) {
             state.isSignedIn = true
         },
+        logout(state, action: PayloadAction<void>) {
+            state.isSignedIn = false
+        },
     },
 })
 
-export const { login } = userLoginAndOutReducer.actions
+export const { login, logout } = userLoginAndOutReducer.actions
 export default userLoginAndOutReducer.reducer

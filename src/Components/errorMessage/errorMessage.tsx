@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import { ReactElement } from 'react'
+import React, { ReactElement } from 'react'
 import { errorMessageStyles } from './errorMessage.styles'
 
 export const errorMessage = (text: string, textTwo?: string): ReactElement => {

@@ -25,8 +25,9 @@ import {
 import { LoginState } from '../../redux/login/LoginState'
 import { login } from '../../redux/reducerSlice/slice'
 import { store } from '../../redux/reducerSlice/store'
-import { errorMessage } from '../../Components/errorMessage/errorMessage'
 import * as SecureStore from 'expo-secure-store'
+import { errorMessage } from '../../Components/errorMessage/errorMessage'
+import { Constants } from '../../Components/constants/Constants'
 
 interface LoginScreenProps {
     navigation: any
@@ -41,7 +42,7 @@ interface LoginScreenProps {
     loggingInWithRedux: Function
 }
 
-const LoginScreen = (props: LoginScreenProps) => {
+const LoginScreen = (props: any) => {
     const [formError, setFormError] = useState(false)
     // const dispatch = useDispatch()
     // const selector = useSelector(
@@ -52,24 +53,12 @@ const LoginScreen = (props: LoginScreenProps) => {
         await SecureStore.setItemAsync(key, value)
     }
 
-    // const test = () => {
-    //     let email = SecureStore.getItemAsync('email')
-    //     let password = SecureStore.getItemAsync('password')
-    //     console.log(email, password)
-    // }
-    // useEffect(() => {
-    //     console.log('test')
-    //     let email = SecureStore.getItemAsync('email')
-    //     let password = SecureStore.getItemAsync('password')
-    //
-    //     console.log(email, password)
-    // }, [setFormError])
-
     const register = () => props.navigation.navigate('Register')
 
     const loginFromForm = (email: string, password: string) => {
         signInWithEmailAndPassword(authentication, email, password)
             .then(async () => {
+                console.log('goes into then')
                 store.dispatch(login())
                 props.navigation.navigate('Search')
                 await save('email', email)
@@ -78,16 +67,13 @@ const LoginScreen = (props: LoginScreenProps) => {
             })
             .catch((error) => {
                 const errorCode = error.code
-                const errorMessage = error.message
+
                 setFormError(true)
-                timedPasswordError()
             })
     }
 
-    const timedPasswordError = () => {
-        setTimeout(() => {
-            setFormError(false)
-        }, 4500)
+    const handleForgotPassword = () => {
+        props.navigation.navigate('LoginStack', { screen: 'Forgot Password' })
     }
 
     return (
@@ -119,6 +105,7 @@ const LoginScreen = (props: LoginScreenProps) => {
                                         label="Email"
                                         keyboardType="email-address"
                                         onChangeText={handleChange('email')}
+                                        onPressIn={() => setFormError(false)}
                                         testID="email"
                                         onFocus={() => setFieldTouched('email')}
                                     />
@@ -158,7 +145,7 @@ const LoginScreen = (props: LoginScreenProps) => {
                                         </Text>
                                     ) : null}
                                     <Button
-                                        onPress={() => {}}
+                                        onPress={handleForgotPassword}
                                         style={loginStyle.cardButton}
                                         uppercase={false}
                                         mode={'contained'}
@@ -170,7 +157,7 @@ const LoginScreen = (props: LoginScreenProps) => {
                                             )
                                         }
                                     >
-                                        Forgot email/password
+                                        Forgot Password
                                     </Button>
                                     <Button
                                         color={'rgb(8,8,8)'}
@@ -201,8 +188,8 @@ const LoginScreen = (props: LoginScreenProps) => {
                         </Formik>
                         {formError
                             ? errorMessage(
-                                  'Incorrect password or login details.',
-                                  'Please try again or reset password.'
+                                  Constants.INCORRECT_PASSWORD_ERROR,
+                                  Constants.INCORRECT_PASSWORD_ERROR_ADVICE
                               )
                             : null}
                     </Card.Content>
@@ -212,26 +199,7 @@ const LoginScreen = (props: LoginScreenProps) => {
     )
 }
 
-const mapStateToProps = (store: AppState) => ({
-    loadingState: store.loading,
-    loginState: store.login,
-})
-
-const mapDispatchToProps = (dispatch: any) =>
-    bindActionCreators(
-        {
-            showLoading: show,
-            hideLoading: hide,
-            recoverPassword: recoverPassword,
-            recoverPasswordSuccess: recoverPasswordSuccess,
-            recoverPasswordFail: recoverPasswordFail,
-            recoveredPasswordReset: recoverPasswordReset,
-            loggingInWithRedux: loggingInWithRedux,
-        },
-        dispatch
-    )
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)
+export default LoginScreen
 
 const styles = StyleSheet.create({
     mainContainer: {
