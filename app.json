@@ -1,32 +1,62 @@
 {
-  "expo": {
-    "name": "property-app",
-    "slug": "property-app",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "expo": {
+        "name": "Property-Analyser",
+        "slug": "Property-Analyser",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "updates": {
+            "fallbackToCacheTimeout": 0
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.marley1991.Property-Analyser"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#FFFFFF"
+            }
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "packagerOpts": {
+            "config": "metro.config.js",
+            "sourceExts": [
+                "expo.ts",
+                "expo.tsx",
+                "expo.js",
+                "expo.jsx",
+                "ts",
+                "tsx",
+                "js",
+                "jsx",
+                "json",
+                "wasm",
+                "svg"
+            ]
+        },
+        "extra": {
+            "eas": {
+                "projectId": "a34f1767-6fed-40da-bab7-688f257c7f2e"
+            }
+        },
+        "_internal": {
+            "isDebug": false,
+            "projectRoot": "/Users/markmarley/Downloads/property-app",
+            "dynamicConfigPath": "/Users/markmarley/Downloads/property-app/app.config.js",
+            "staticConfigPath": "/Users/markmarley/Downloads/property-app/app.json",
+            "packageJsonPath": "/Users/markmarley/Downloads/property-app/package.json"
+        },
+        "description": "Property Analyser is a property investement tool to help investors make better decisions.",
+        "sdkVersion": "46.0.0",
+        "platforms": ["ios", "android", "web"]
     }
-  }
 }

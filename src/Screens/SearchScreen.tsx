@@ -18,6 +18,8 @@ import homeImageTwo from '../Assets/Images/home-two.jpg'
 import homeImageThree from '../Assets/Images/home-three.jpg'
 
 import { useSelector } from 'react-redux'
+import { LoadingAnimation } from '../utils/LoadingHouses'
+import HouseImageSvgr from '../utils/HouseImageSvgr'
 
 const SearchScreen = (props: any) => {
     let isLoggedIn = useSelector(
@@ -134,3 +136,6 @@ const styles = StyleSheet.create({
 })
 
 export default SearchScreen
+function loadingHouse(): React.ReactNode {
+    throw new Error('Function not implemented.')
+}

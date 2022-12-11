@@ -11,23 +11,20 @@ import { loginStyle } from './login.style'
 import { Formik } from 'formik'
 import { loginForm } from './login.form'
 import { LoadingState } from '../../redux/loading/LoadingState'
-import { hide, show } from '../../redux/loading/loading.actions'
-import { bindActionCreators } from '@reduxjs/toolkit'
-import { connect } from 'react-redux'
-import { AppState } from '../../AppState'
-import {
-    loggingInWithRedux,
-    recoverPassword,
-    recoverPasswordFail,
-    recoverPasswordReset,
-    recoverPasswordSuccess,
-} from '../../redux/login/login.actions'
+import { useSelector, useDispatch } from 'react-redux'
 import { LoginState } from '../../redux/login/LoginState'
-import { login } from '../../redux/reducerSlice/slice'
+import {
+    login,
+    stopLoading,
+    startLoading,
+    AuthState,
+} from '../../redux/reducerSlice/slice'
 import { store } from '../../redux/reducerSlice/store'
 import * as SecureStore from 'expo-secure-store'
 import { errorMessage } from '../../Components/errorMessage/errorMessage'
 import { Constants } from '../../Components/constants/Constants'
+import { checkLoggedIn } from './AuthCheckBeforeLogin'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 interface LoginScreenProps {
     navigation: any
@@ -44,10 +41,9 @@ interface LoginScreenProps {
 
 const LoginScreen = (props: any) => {
     const [formError, setFormError] = useState(false)
-    // const dispatch = useDispatch()
-    // const selector = useSelector(
-    //     (state: any) => state.userLoginAndOut.isSignedIn
-    // )
+    const isLoading = useSelector(
+        (state: any) => state.userLoginAndOut.isLoading
+    )
 
     async function save(key: string, value: string) {
         await SecureStore.setItemAsync(key, value)
@@ -55,7 +51,7 @@ const LoginScreen = (props: any) => {
 
     const register = () => props.navigation.navigate('Register')
 
-    const loginFromForm = (email: string, password: string) => {
+    const loginFromForm = async (email: string, password: string) => {
         signInWithEmailAndPassword(authentication, email, password)
             .then(async () => {
                 console.log('goes into then')
@@ -80,6 +76,15 @@ const LoginScreen = (props: any) => {
         <SafeAreaView style={loginStyle.content}>
             <View style={loginStyle.view}>
                 <PropertyLogo />
+                <Spinner
+                    //visibility of Overlay Loading Spinner
+                    visible={isLoading}
+                    color={'#032845'}
+                    //Text with the Spinner
+                    textContent={'Loading...'}
+                    //Text style of the Spinner Text
+                    textStyle={styles.spinnerTextStyle}
+                />
                 <Card>
                     <Card.Title
                         titleNumberOfLines={2}
@@ -102,6 +107,9 @@ const LoginScreen = (props: any) => {
                             }) => (
                                 <>
                                     <TextInput
+                                        theme={{
+                                            colors: { primary: theme.mainGold },
+                                        }}
                                         label="Email"
                                         keyboardType="email-address"
                                         onChangeText={handleChange('email')}
@@ -112,10 +120,12 @@ const LoginScreen = (props: any) => {
                                     {touched.email && errors.email ? (
                                         <Text
                                             style={{
+                                                marginTop: 5,
                                                 padding: 1,
                                                 textAlign: 'center',
                                                 color: 'white',
-                                                backgroundColor: 'red',
+                                                backgroundColor: '#b32134',
+                                                borderRadius: 10,
                                             }}
                                             testID="error-email"
                                         >
@@ -125,7 +135,9 @@ const LoginScreen = (props: any) => {
 
                                     <TextInput
                                         label="Password"
-                                        style={loginStyle.textInput}
+                                        theme={{
+                                            colors: { primary: theme.mainGold },
+                                        }}
                                         secureTextEntry={true}
                                         onChangeText={handleChange('password')}
                                         testID="password"
@@ -137,7 +149,12 @@ const LoginScreen = (props: any) => {
                                         <Text
                                             style={{
                                                 color: 'white',
-                                                backgroundColor: 'red',
+                                                marginTop: 5,
+                                                padding: 1,
+                                                textAlign: 'center',
+                                                backgroundColor: '#b32134',
+                                                borderRadius: 30,
+                                                marginBottom: 10,
                                             }}
                                             testID="error-password"
                                         >
@@ -167,6 +184,12 @@ const LoginScreen = (props: any) => {
                                             loginFromForm(
                                                 values.email,
                                                 values.password
+                                            )
+                                        }
+                                        disabled={
+                                            !!(
+                                                values.email === '' ||
+                                                errors.email
                                             )
                                         }
                                         mode="contained"
@@ -249,4 +272,12 @@ const styles = StyleSheet.create({
         color: theme.mainGold,
         fontSize: 16,
     },
+    spinnerTextStyle: {
+        textAlign: 'center',
+        marginTop: -50,
+        color: '#032845',
+    },
 })
+function dispatch(arg0: { payload: undefined; type: string }, arg1: void) {
+    throw new Error('Function not implemented.')
+}

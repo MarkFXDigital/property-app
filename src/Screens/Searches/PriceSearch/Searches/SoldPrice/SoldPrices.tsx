@@ -38,7 +38,7 @@ const SoldPrices = ({ navigation }: any) => {
     ]
     const fetchPriceSearch = async () => {
         fetch(
-            `https://${API_URL}/sold-prices?key=API_KEY&postcode=${postcode}&type=flat&max_age=30
+            `https://${API_URL}/sold-prices?key=${API_KEY}&postcode=${postcode}&type=flat&max_age=30
 `
         )
             .then(async (response) => {

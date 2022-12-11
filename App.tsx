@@ -44,6 +44,9 @@ const notLoggedInStack = createNativeStackNavigator()
 const helpStack = createNativeStackNavigator()
 const AuthStack = createNativeStackNavigator()
 
+LogBox.ignoreLogs(['Warning: ...']) // Ignore log notification by message
+LogBox.ignoreAllLogs() //Ignore all log notifications
+
 const AuthStackScreen = () => {
     const mainStack = createNativeStackNavigator()
     const notLoggedInStack = createNativeStackNavigator()
@@ -123,11 +126,6 @@ const AuthStackScreen = () => {
 // Initialized all Navigator
 const Tab = createBottomTabNavigator()
 
-// Ignore log notification by message:
-LogBox.ignoreLogs([
-    "AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage",
-])
-
 export function AppTabsNavigation() {
     const isLoggedIn = useSelector(
         (state: any) => state.userLoginAndOut.isSignedIn
@@ -198,7 +196,7 @@ export function AppTabsNavigation() {
 const App = (props: any) => {
     const Stack = createNativeStackNavigator()
 
-    checkLoggedIn(props).then()
+    checkLoggedIn(props)
     // const loginFromForm = (email: string, password: string) => {}
 
     return (

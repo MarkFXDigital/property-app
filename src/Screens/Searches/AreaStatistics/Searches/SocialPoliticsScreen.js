@@ -297,7 +297,7 @@ const SocialPoliticsScreen = () => {
                                 data={[
                                     {
                                         name: 'Work From Home',
-                                        symbol: { fill: '#f72119' },
+                                        symbol: { fill: '#be3400' },
                                     },
                                     {
                                         name: 'Bicycle',
@@ -314,18 +314,18 @@ const SocialPoliticsScreen = () => {
                                     { name: 'Train', symbol: { fill: 'grey' } },
                                     {
                                         name: 'Underground',
-                                        symbol: { fill: '#34eb77' },
+                                        symbol: { fill: '#747c24' },
                                     },
                                     {
                                         name: 'Other',
-                                        symbol: { fill: '#ffff00' },
+                                        symbol: { fill: '#bee600' },
                                     },
                                 ]}
                             />
 
                             <VictoryPie
                                 colorScale={[
-                                    '#f72119',
+                                    '#be3400',
                                     '#0087DC',
                                     'gold',
                                     'green',
@@ -333,8 +333,8 @@ const SocialPoliticsScreen = () => {
                                     'purple',
                                     'black',
                                     'grey',
-                                    '#34eb77',
-                                    '#ffff00',
+                                    '#747c24',
+                                    '#bee600',
                                 ]}
                                 labels={() => null}
                                 data={[

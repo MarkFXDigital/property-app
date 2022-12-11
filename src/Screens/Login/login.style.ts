@@ -17,9 +17,7 @@ export const loginStyle = StyleSheet.create({
         color: '#ad974f',
         height: 50,
     },
-    textInput: {
-        marginBottom: 15,
-    },
+
     cardButton: {
         margin: 2,
         marginLeft: 0,
