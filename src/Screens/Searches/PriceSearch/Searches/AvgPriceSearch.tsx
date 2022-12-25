@@ -14,7 +14,7 @@ import { theme } from '../../../../theme'
 import { Ionicons } from '@expo/vector-icons'
 import { barGraphComponent } from '../../../../Components/graphs/barGraph'
 import { errorMessage } from '../../../../Components/errorMessage/errorMessage'
-import { API_KEY, API_URL } from '@env'
+import { API_KEY, API_URL } from '../../../../utils/consts'
 
 const AvgPriceSearch = () => {
     // On Screen State

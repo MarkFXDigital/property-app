@@ -14,7 +14,7 @@ import { theme } from '../../../../theme'
 import { Ionicons } from '@expo/vector-icons'
 import { lineGraphComponent } from '../../../../Components/graphs/lineGraph/lineGraph'
 import { errorMessage } from '../../../../Components/errorMessage/errorMessage'
-import { API_KEY, API_URL } from '@env'
+import { API_KEY, API_URL } from '../../../../utils/consts'
 
 const GrowthSearch = () => {
     // On Screen State

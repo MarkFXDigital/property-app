@@ -16,10 +16,7 @@ import homeImageOne from '../Assets/Images/home-one.jpg'
 import homeImageTwo from '../Assets/Images/home-two.jpg'
 // @ts-ignore
 import homeImageThree from '../Assets/Images/home-three.jpg'
-
 import { useSelector } from 'react-redux'
-import { LoadingAnimation } from '../utils/LoadingHouses'
-import HouseImageSvgr from '../utils/HouseImageSvgr'
 
 const SearchScreen = (props: any) => {
     let isLoggedIn = useSelector(

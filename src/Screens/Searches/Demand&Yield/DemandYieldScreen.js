@@ -8,7 +8,6 @@ import {
     ScrollView,
 } from 'react-native'
 import PropertyLogo from '../../../Components/PropertyLogo'
-
 import homeImageOne from '../../../Assets/Images/home-one.jpg'
 import homeImageTwo from '../../../Assets/Images/home-two.jpg'
 import homeImageThree from '../../../Assets/Images/home-three.jpg'

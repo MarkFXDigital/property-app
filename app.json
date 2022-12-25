@@ -45,7 +45,8 @@
         },
         "extra": {
             "eas": {
-                "projectId": "a34f1767-6fed-40da-bab7-688f257c7f2e"
+                "projectId": "a34f1767-6fed-40da-bab7-688f257c7f2e",
+                "API_KEY": ""
             }
         },
         "_internal": {
@@ -57,6 +58,18 @@
         },
         "description": "Property Analyser is a property investement tool to help investors make better decisions.",
         "sdkVersion": "46.0.0",
-        "platforms": ["ios", "android", "web"]
+        "platforms": ["ios", "android", "web"],
+        "plugins": [
+            [
+                "expo-build-properties",
+                {
+                    "android": {
+                        "compileSdkVersion": 31,
+                        "targetSdkVersion": 31,
+                        "buildToolsVersion": "31.0.0"
+                    }
+                }
+            ]
+        ]
     }
 }

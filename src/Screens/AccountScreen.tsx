@@ -19,6 +19,17 @@ const AccountScreen = (props: any) => {
     const [message, setMessage] = useState('')
     const [emailFrom, setFromEmail] = useState('')
 
+    // code fragment
+    let postData = {
+        service_id: 'service_sfe7k3r',
+        template_id: 'YOUR_TEMPLATE_ID',
+        user_id: 'YOUR_PUBLIC_KEY',
+        template_params: {
+            username: 'James',
+            'g-recaptcha-response': '03AHJ_ASjnLA214KSNKFJAK12sfKASfehbmfd...',
+        },
+    }
+
     let isLoggedIn = useSelector(
         (state: AuthTopLevel) => state.userLoginAndOut.isSignedIn
     )

@@ -14,9 +14,10 @@ import { Ionicons } from '@expo/vector-icons'
 import Dropdown from '../../../../../Components/Dropdown'
 import { barGraphComponent } from '../../../../../Components/graphs/barGraph'
 import { errorMessage } from '../../../../../Components/errorMessage/errorMessage'
-import { API_KEY, API_URL } from '@env'
+import { API_KEY, API_URL } from '../../../../../utils/consts'
 
 const SoldPrices = ({ navigation }: any) => {
+    console.log('API KEY', API_KEY)
     // On Screen State
     const [tips, setTips] = useState(false)
     // To redux response data
