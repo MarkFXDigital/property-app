@@ -2,7 +2,7 @@
     "expo": {
         "name": "Property-Analyser",
         "slug": "Property-Analyser",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "orientation": "portrait",
         "icon": "./src/Assets/Icons/icon.jpg",
         "splash": {
