@@ -4,7 +4,7 @@
         "slug": "Property-Analyser",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./assets/icon.png",
+        "icon": "./src/Assets/Icons/icon.jpg",
         "splash": {
             "image": "./assets/splash.png",
             "resizeMode": "contain",
@@ -45,8 +45,7 @@
         },
         "extra": {
             "eas": {
-                "projectId": "a34f1767-6fed-40da-bab7-688f257c7f2e",
-                "API_KEY": ""
+                "projectId": "a34f1767-6fed-40da-bab7-688f257c7f2e"
             }
         },
         "_internal": {

@@ -118,7 +118,7 @@ const AvgRentsScreen = () => {
                             style={styles.input}
                             onChangeText={(val) => setPostcode(val)}
                             onPressIn={() => setShowSearchErrorPopup(false)}
-                            placeholder="Please entere desired postcode"
+                            placeholder="Please enter desired postcode"
                             placeholderTextColor="grey"
                         />
                         <TextInput

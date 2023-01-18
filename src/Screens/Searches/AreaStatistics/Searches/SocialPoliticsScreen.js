@@ -19,7 +19,7 @@ import { FontAwesome } from '@expo/vector-icons'
 import { theme } from '../../../../theme'
 import { Ionicons } from '@expo/vector-icons'
 import { errorMessage } from '../../../../Components/errorMessage/errorMessage'
-import { API_KEY, API_KEY } from '../../../../utils/consts'
+import { API_KEY, API_URL } from '../../../../utils/consts'
 
 const SocialPoliticsScreen = () => {
     // On Screen State
@@ -42,7 +42,7 @@ const SocialPoliticsScreen = () => {
 
     const fetchPriceSearch = async () => {
         const response = await fetch(
-            `https://${API_KEY}/demographics?key=${API_KEY}&postcode=${postcode}`
+            `https://${API_URL}/demographics?key=${API_KEY}&postcode=${postcode}`
         )
             .then(async (response) => {
                 const json = await response.json()
