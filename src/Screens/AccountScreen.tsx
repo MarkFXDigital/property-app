@@ -1,14 +1,15 @@
 import React, { useRef, useState } from 'react'
-import { View, Text, StyleSheet, TextInput } from 'react-native'
+import { View, Text, StyleSheet, Button, Linking, FlatList } from 'react-native'
 import PropertyLogo from '../Components/PropertyLogo'
 import { GeneralButton } from '../Components/buttons/SubmitButton'
-import { getAuth, signOut } from 'firebase/auth'
+import { getAuth, signOut, deleteUser } from 'firebase/auth'
 import * as SecureStore from 'expo-secure-store'
 import { checkLoggedIn } from './Login/AuthCheckBeforeLogin'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { AuthTopLevel, logout } from '../redux/reducerSlice/slice'
 import { store } from '../redux/reducerSlice/store'
 import { useSelector } from 'react-redux'
+import { Entypo } from '@expo/vector-icons'
 // import email from 'react-native-email'
 
 interface LoginScreenProps {
@@ -33,20 +34,11 @@ const AccountScreen = (props: any) => {
     let isLoggedIn = useSelector(
         (state: AuthTopLevel) => state.userLoginAndOut.isSignedIn
     )
-    // const submitFeedbackForm = () => {
-    //     const to = ['markmarleydev@gmail.com', 'markmarley19911@gmail.com.com'] // string or array of email addresses
-    //     email(to, {
-    //         // Optional additional arguments
-    //         cc: [], // string or array of email addresses
-    //         bcc: '', // string or array of email addresses
-    //         subject: `email from ${emailFrom}`,
-    //         body: `From : ${fullName} - message ${message}`,
-    //         checkCanOpen: false, // Call Linking.canOpenURL prior to Linking.openURL
-    //     }).catch(console.error)
-    // }
+    console.log(isLoggedIn)
 
     const submitLogout = () => {
         const auth = getAuth()
+
         signOut(auth)
             .then(async () => {
                 store.dispatch(logout())
@@ -62,11 +54,25 @@ const AccountScreen = (props: any) => {
         console.log(isLoggedIn, 'is logged in acc screen')
     }
 
+    const deleteUserFromFirebase = () => {
+        const auth = getAuth()
+        const user: any = auth.currentUser
+
+        deleteUser(user)
+            .then(() => {
+                // User deleted.
+            })
+            .catch((error) => {
+                // An error ocurred
+                // ...
+            })
+    }
+
     return (
         <SafeAreaView style={styles.mainContainer}>
             <PropertyLogo />
 
-            <Text style={styles.inputLabels}>Full Name:</Text>
+            {/* <Text style={styles.inputLabels}>Full Name:</Text>
             <TextInput
                 style={styles.input}
                 placeholder=" Please enter your full name "
@@ -84,12 +90,113 @@ const AccountScreen = (props: any) => {
                 placeholder="Please enter your message"
             />
 
-            <GeneralButton marginTop={0} onPress={() => {}} title={'Submit'} />
-            <GeneralButton
-                onPress={submitLogout}
-                title={'Logout'}
-                marginTop={15}
-            />
+            <GeneralButton marginTop={0} onPress={() => {}} title={'Submit'} /> */}
+
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: '600' }}>
+                    A note from the developer
+                </Text>
+                <Entypo
+                    name="arrow-with-circle-down"
+                    size={24}
+                    color="#ad974f"
+                    style={{
+                        marginLeft: 5,
+                    }}
+                />
+            </View>
+            <View
+                style={{
+                    backgroundColor: 'white',
+                    borderColor: 'black',
+                    borderWidth: 1,
+                    borderRadius: 25,
+                    marginVertical: 10,
+                }}
+            >
+                <Text
+                    style={{
+                        paddingVertical: 10,
+                        paddingHorizontal: 10,
+                        fontSize: 15,
+                    }}
+                >
+                    Firstly thank you for taking the time to download the app.
+                    The app is currently managed by only myself, improvement and
+                    bug fixes will fixed as quickly as possible.
+                </Text>
+                <Text
+                    style={{
+                        paddingVertical: 10,
+                        paddingHorizontal: 10,
+                        fontSize: 15,
+                    }}
+                >
+                    If you do find any bugs or would like to get in touch me
+                    please touch the link below and drop me an email.
+                </Text>
+
+                <Button
+                    onPress={() =>
+                        Linking.openURL('mailto:markmarleydev@gmail.com')
+                    }
+                    title="markmarleydev@gmail.com"
+                />
+                <View
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        alignContent: 'center',
+                        paddingBottom: 20,
+                    }}
+                >
+                    <Text style={{ fontWeight: '600', paddingBottom: 5 }}>
+                        Updates coming up soon...
+                    </Text>
+
+                    <Text
+                        style={{ textAlign: 'center' }}
+                    >{`\u2022  Account improvements with feedback form`}</Text>
+                    <Text
+                        style={{ textAlign: 'center' }}
+                    >{`\u2022  Improved feedback from button clicks`}</Text>
+                    <Text
+                        style={{ textAlign: 'center' }}
+                    >{`\u2022  Demand and Yield additions with Property         Yield & HMO rents`}</Text>
+                </View>
+            </View>
+            {isLoggedIn ? (
+                <>
+                    <GeneralButton
+                        onPress={submitLogout}
+                        title={'Logout'}
+                        marginTop={15}
+                    />
+                    <View
+                        style={{
+                            backgroundColor: 'white',
+                            borderColor: 'black',
+                            borderWidth: 1,
+                            borderRadius: 25,
+                            marginBottom: 10,
+                            marginTop: 20,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingHorizontal: 15,
+                            paddingBottom: 10,
+                        }}
+                    >
+                        <Text style={styles.deleteAccountText}>
+                            Would you like to delete your account?
+                        </Text>
+                        <GeneralButton
+                            onPress={deleteUserFromFirebase}
+                            title={'Delete Account'}
+                            marginTop={15}
+                        />
+                    </View>
+                </>
+            ) : null}
         </SafeAreaView>
     )
 }
@@ -126,6 +233,9 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         marginHorizontal: 20,
         // paddingHorizontal:
+    },
+    deleteAccountText: {
+        marginTop: 30,
     },
 })
 

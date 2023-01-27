@@ -98,7 +98,6 @@ const AuthStackScreen = () => {
                             name="Sold Price Data"
                             component={SoldPriceData}
                         />
-
                         <mainStack.Screen
                             name="Demand Yield"
                             component={DemandYieldSearchScreen}
@@ -107,7 +106,6 @@ const AuthStackScreen = () => {
                             name="Average Rents"
                             component={AvgRentsScreen}
                         />
-
                         <mainStack.Screen
                             name="Area Statistics"
                             component={AreaStatisticsScreen}

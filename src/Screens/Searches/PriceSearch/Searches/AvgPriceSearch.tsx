@@ -8,7 +8,6 @@ import {
     TextInput,
 } from 'react-native'
 import PropertyLogo from '../../../../Components/PropertyLogo'
-
 import { FontAwesome } from '@expo/vector-icons'
 import { theme } from '../../../../theme'
 import { Ionicons } from '@expo/vector-icons'
