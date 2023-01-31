@@ -4,3 +4,8 @@ declare module '*.svg' {
     const src: string
     export default src
 }
+
+export type PropertyTypes = {
+    label: string
+    value: string
+}

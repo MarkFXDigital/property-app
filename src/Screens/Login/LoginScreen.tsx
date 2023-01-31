@@ -227,8 +227,7 @@ export default LoginScreen
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-
-        marginTop: 50,
+        // marginTop: 50,
         alignItems: 'center',
     },
     inputContainer: {

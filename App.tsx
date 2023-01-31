@@ -22,6 +22,7 @@ import SoldPriceData from './src/Screens/Searches/PriceSearch/Searches/SoldPrice
 //Demand Yield Screens
 import DemandYieldSearchScreen from './src/Screens/Searches/Demand&Yield/DemandYieldScreen'
 import AvgRentsScreen from './src/Screens/Searches/Demand&Yield/Searches/AvgRentsScreen'
+import PropertyYieldScreen from './src/Screens/Searches/Demand&Yield/Searches/PropertyYield/PropertyYield'
 
 // Area Statistic Screens
 import AreaStatisticsScreen from './src/Screens/Searches/AreaStatistics/AreaStatisticsScreen'
@@ -99,12 +100,16 @@ const AuthStackScreen = () => {
                             component={SoldPriceData}
                         />
                         <mainStack.Screen
-                            name="Demand Yield"
+                            name="Demand & Yield"
                             component={DemandYieldSearchScreen}
                         />
                         <mainStack.Screen
                             name="Average Rents"
                             component={AvgRentsScreen}
+                        />
+                        <mainStack.Screen
+                            name="Property Yield"
+                            component={PropertyYieldScreen}
                         />
                         <mainStack.Screen
                             name="Area Statistics"

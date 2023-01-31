@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react'
-import { View, Text, StyleSheet, Button, Linking, FlatList } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, Button, Linking, Alert } from 'react-native'
 import PropertyLogo from '../Components/PropertyLogo'
 import { GeneralButton } from '../Components/buttons/SubmitButton'
 import { getAuth, signOut, deleteUser } from 'firebase/auth'
@@ -60,12 +60,38 @@ const AccountScreen = (props: any) => {
 
         deleteUser(user)
             .then(() => {
-                // User deleted.
+                store.dispatch(logout())
+                SecureStore.deleteItemAsync('email')
+                SecureStore.deleteItemAsync('password')
+                checkLoggedIn(props)
             })
             .catch((error) => {
-                // An error ocurred
-                // ...
+                store.dispatch(logout())
+                SecureStore.deleteItemAsync('email')
+                SecureStore.deleteItemAsync('password')
+                checkLoggedIn(props)
             })
+    }
+    const testAlert = () => {
+        const auth = getAuth()
+        const user: any = auth.currentUser
+        console.log(user)
+        Alert.alert(
+            `Are you sure you want to delete your account?`,
+            'If you have time would you provide some feedback before closing account?',
+            [
+                {
+                    text: 'Delete account',
+                    style: 'cancel',
+                    onPress: deleteUserFromFirebase,
+                },
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                },
+            ],
+            { cancelable: true }
+        )
     }
 
     return (
@@ -122,8 +148,8 @@ const AccountScreen = (props: any) => {
                     }}
                 >
                     Firstly thank you for taking the time to download the app.
-                    The app is currently managed by only myself, improvement and
-                    bug fixes will fixed as quickly as possible.
+                    The app is currently managed only by myself, improvements
+                    and bug fixes will fixed as quickly as possible.
                 </Text>
                 <Text
                     style={{
@@ -132,8 +158,8 @@ const AccountScreen = (props: any) => {
                         fontSize: 15,
                     }}
                 >
-                    If you do find any bugs or would like to get in touch me
-                    please touch the link below and drop me an email.
+                    If you do find any bugs or would like to get in with touch
+                    me please click the link below and drop me an email.
                 </Text>
 
                 <Button
@@ -190,7 +216,7 @@ const AccountScreen = (props: any) => {
                             Would you like to delete your account?
                         </Text>
                         <GeneralButton
-                            onPress={deleteUserFromFirebase}
+                            onPress={testAlert}
                             title={'Delete Account'}
                             marginTop={15}
                         />

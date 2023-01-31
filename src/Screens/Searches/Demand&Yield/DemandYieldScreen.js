@@ -30,14 +30,17 @@ const DemandYieldScreen = ({ navigation }) => {
                             <Text style={styles.imageText}>Average Rents </Text>
                         </ImageBackground>
                     </TouchableOpacity>
-                    <TouchableOpacity styles={styles.imageContainer}>
+                    <TouchableOpacity
+                        styles={styles.imageContainer}
+                        onPress={() => navigation.navigate('Property Yield')}
+                    >
                         <ImageBackground
                             source={homeImageTwo}
                             style={styles.images}
                             imageStyle={styles.ImageBackgroundContainer}
                         >
-                            <Text style={styles.imageTextComingSoon}>
-                                Coming Soon! Property Yield
+                            <Text style={styles.imageText}>
+                                Property Yields
                             </Text>
                         </ImageBackground>
                     </TouchableOpacity>

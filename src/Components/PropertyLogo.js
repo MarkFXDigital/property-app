@@ -1,28 +1,37 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Image } from 'react-native'
 import { theme } from '../theme'
 import allConstants, { Constants } from '../Components/constants/Constants'
+import Icon from '../../assets/propertyAnalyserIcon.png'
 
 const PropertyLogo = () => {
     return (
         <View style={styles.logoContainer}>
-            <Text style={styles.logoText}>{Constants.APP_NAME}</Text>
+            <Image
+                style={{
+                    height: 150,
+                    width: 250,
+                    padding: 0,
+                }}
+                source={Icon}
+            />
+            {/* <Text style={styles.logoText}>{Constants.APP_NAME}</Text> */}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     logoContainer: {
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 3,
+        // borderWidth: 3,
         borderColor: theme.mainGold,
-        marginBottom: 20,
+
+        padding: 0,
     },
     logoText: {
-        margin: 5,
-        marginHorizontal: 5,
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 'bold',
     },
 })

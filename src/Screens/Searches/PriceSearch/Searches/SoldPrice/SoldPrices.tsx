@@ -15,6 +15,7 @@ import Dropdown from '../../../../../Components/Dropdown'
 import { barGraphComponent } from '../../../../../Components/graphs/barGraph'
 import { errorMessage } from '../../../../../Components/errorMessage/errorMessage'
 import { API_KEY, API_URL } from '../../../../../utils/consts'
+import { PropertyTypes } from '../../../../../types'
 
 const SoldPrices = ({ navigation }: any) => {
     console.log('API KEY', API_KEY)
@@ -25,10 +26,12 @@ const SoldPrices = ({ navigation }: any) => {
     const [isLoaded, setIsLoaded] = useState(false)
     const [showSearchErrorPopup, setShowSearchErrorPopup] = useState(false)
     const [searchErrorResponse, setSearchErrorResponse] = useState('')
-
     // Search Params
     const [postcode, setPostcode] = useState('')
-    const [propertyType, setPropertyType] = useState('')
+    const [propertyType, setPropertyType] = useState<PropertyTypes>({
+        label: '',
+        value: '',
+    })
 
     const dropDownData = [
         { label: 'Flat', value: 'flat' },
@@ -39,7 +42,7 @@ const SoldPrices = ({ navigation }: any) => {
     ]
     const fetchPriceSearch = async () => {
         fetch(
-            `https://${API_URL}/sold-prices?key=${API_KEY}&postcode=${postcode}&type=flat&max_age=30
+            `https://${API_URL}/sold-prices?key=${API_KEY}&postcode=${postcode}&type=${propertyType.value}&max_age=30
 `
         )
             .then(async (response) => {

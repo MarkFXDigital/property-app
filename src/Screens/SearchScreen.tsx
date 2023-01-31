@@ -51,7 +51,7 @@ const SearchScreen = (props: any) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.imageContainer}
-                    onPress={() => props.navigation.navigate('Demand Yield')}
+                    onPress={() => props.navigation.navigate('Demand & Yield')}
                 >
                     <ImageBackground
                         source={homeImageTwo}
