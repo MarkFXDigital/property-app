@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { theme } from '../../theme'
-import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
+import {
+    View,
+    StyleSheet,
+    Text,
+    SafeAreaView,
+    KeyboardAvoidingView,
+} from 'react-native'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { authentication } from '../../../firebase'
 
@@ -74,7 +80,7 @@ const LoginScreen = (props: any) => {
 
     return (
         <SafeAreaView style={loginStyle.content}>
-            <View style={loginStyle.view}>
+            <KeyboardAvoidingView style={loginStyle.view}>
                 <PropertyLogo />
                 <Spinner
                     //visibility of Overlay Loading Spinner
@@ -217,7 +223,7 @@ const LoginScreen = (props: any) => {
                             : null}
                     </Card.Content>
                 </Card>
-            </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     )
 }

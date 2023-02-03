@@ -6,11 +6,13 @@ import {
     ImageBackground,
     TouchableOpacity,
     ScrollView,
+    Image,
 } from 'react-native'
 import PropertyLogo from '../../../Components/PropertyLogo'
 import homeImageOne from '../../../Assets/Images/home-one.jpg'
 import homeImageTwo from '../../../Assets/Images/home-two.jpg'
 import homeImageThree from '../../../Assets/Images/home-three.jpg'
+import newIcon from '../../../Assets/Images/newIcon.png'
 
 const DemandYieldScreen = ({ navigation }) => {
     return (
@@ -39,6 +41,10 @@ const DemandYieldScreen = ({ navigation }) => {
                             style={styles.images}
                             imageStyle={styles.ImageBackgroundContainer}
                         >
+                            <Image
+                                source={newIcon}
+                                style={styles.newSearchIcon}
+                            />
                             <Text style={styles.imageText}>
                                 Property Yields
                             </Text>
@@ -47,14 +53,21 @@ const DemandYieldScreen = ({ navigation }) => {
                 </View>
 
                 <View style={styles.firstSearchContainer}>
-                    <TouchableOpacity styles={styles.imageContainer}>
+                    <TouchableOpacity
+                        styles={styles.imageContainer}
+                        onPress={() => navigation.navigate('Average HMO Rents')}
+                    >
                         <ImageBackground
                             source={homeImageOne}
                             style={styles.images}
                             imageStyle={styles.ImageBackgroundContainer}
                         >
-                            <Text style={styles.imageTextComingSoon}>
-                                Coming Soon! Rents HMO
+                            <Image
+                                source={newIcon}
+                                style={styles.newSearchIcon}
+                            />
+                            <Text style={styles.imageTextWithNewIcon}>
+                                Average rents HMO
                             </Text>
                         </ImageBackground>
                     </TouchableOpacity>
@@ -140,6 +153,16 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 5,
     },
+    imageTextWithNewIcon: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 18,
+        textAlign: 'center',
+        padding: 5,
+        paddingTop: 0,
+        marginBottom: 10,
+    },
+
     imageTextComingSoon: {
         color: 'white',
         fontWeight: 'bold',
@@ -147,6 +170,12 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginHorizontal: 3,
         opacity: 0.75,
+    },
+    newSearchIcon: {
+        alignSelf: 'flex-end',
+        marginRight: 5,
+        paddingBottom: 5,
+        marginBottom: 0,
     },
     firstSearchContainer: {
         width: '80%',

@@ -38,6 +38,7 @@ import { login } from './src/redux/reducerSlice/slice'
 import * as SecureStore from 'expo-secure-store'
 import { checkLoggedIn } from './src/Screens/Login/AuthCheckBeforeLogin'
 import { ForgotPasswordScreen } from './src/Screens/Login/forgotPassword/ForgotPasswordScreen'
+import AvgRentsHmoScreen from './src/Screens/Searches/Demand&Yield/Searches/RentsHmo/AvgRentsHmo'
 
 // Stack Navigators
 const loggedInStack = createNativeStackNavigator()
@@ -106,6 +107,10 @@ const AuthStackScreen = () => {
                         <mainStack.Screen
                             name="Average Rents"
                             component={AvgRentsScreen}
+                        />
+                        <mainStack.Screen
+                            name="Average HMO Rents"
+                            component={AvgRentsHmoScreen}
                         />
                         <mainStack.Screen
                             name="Property Yield"
