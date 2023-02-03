@@ -174,6 +174,7 @@ const AccountScreen = (props: any) => {
                         alignItems: 'center',
                         alignContent: 'center',
                         paddingBottom: 20,
+                        paddingHorizontal: 10,
                     }}
                 >
                     <Text style={{ fontWeight: '600', paddingBottom: 5 }}>
@@ -182,13 +183,13 @@ const AccountScreen = (props: any) => {
 
                     <Text
                         style={{ textAlign: 'center' }}
-                    >{`\u2022  Account improvements with feedback form`}</Text>
+                    >{`\u2022 New search - Development gross domestic value(GDV)`}</Text>
                     <Text
                         style={{ textAlign: 'center' }}
-                    >{`\u2022  Improved feedback from button clicks`}</Text>
+                    >{`\u2022 New search - Local estate agent and local schools `}</Text>
                     <Text
                         style={{ textAlign: 'center' }}
-                    >{`\u2022  Demand and Yield additions with Property         Yield & HMO rents`}</Text>
+                    >{`\u2022  Code improvements to improve perfomance`}</Text>
                 </View>
             </View>
             {isLoggedIn ? (
