@@ -3,15 +3,25 @@ import { theme } from '../../theme'
 
 export const loginStyle = StyleSheet.create({
     content: {
-        display: 'flex',
         flex: 1,
+        display: 'flex',
+        alignContent: 'center',
+        alignItems: 'center',
         justifyContent: 'center',
-        flexDirection: 'row',
+        width: '100%',
+        height: '100%',
+        marginTop: 60,
+        flexDirection: 'column',
         backgroundColor: 'rgb(242,242,242)',
     },
     view: {
-        width: '80%',
+        flex: 1,
+        display: 'flex',
+        width: '100%',
         justifyContent: 'center',
+        alignContent: 'center',
+        alignSelf: 'center',
+        alignItems: 'center',
     },
     cardTitle: {
         color: '#ad974f',

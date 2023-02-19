@@ -6,6 +6,7 @@ import {
     Text,
     SafeAreaView,
     KeyboardAvoidingView,
+    ScrollView,
 } from 'react-native'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { authentication } from '../../../firebase'
@@ -80,150 +81,172 @@ const LoginScreen = (props: any) => {
 
     return (
         <SafeAreaView style={loginStyle.content}>
-            <KeyboardAvoidingView style={loginStyle.view}>
-                <PropertyLogo />
-                <Spinner
-                    //visibility of Overlay Loading Spinner
-                    visible={isLoading}
-                    color={'#032845'}
-                    //Text with the Spinner
-                    textContent={'Loading...'}
-                    //Text style of the Spinner Text
-                    textStyle={styles.spinnerTextStyle}
-                />
-                <Card>
-                    <Card.Title
-                        titleNumberOfLines={2}
-                        titleStyle={loginStyle.cardTitle}
-                        title="Welcome to Property Analyser"
-                    ></Card.Title>
-                    <Card.Content>
-                        <Formik
-                            initialValues={{ email: '', password: '' }}
-                            validationSchema={loginForm}
-                            onSubmit={() => {}}
-                        >
-                            {({
-                                handleSubmit,
-                                handleChange,
-                                errors,
-                                setFieldTouched,
-                                touched,
-                                values,
-                            }) => (
-                                <>
-                                    <TextInput
-                                        theme={{
-                                            colors: { primary: theme.mainGold },
-                                        }}
-                                        label="Email"
-                                        keyboardType="email-address"
-                                        onChangeText={handleChange('email')}
-                                        onPressIn={() => setFormError(false)}
-                                        testID="email"
-                                        onFocus={() => setFieldTouched('email')}
-                                    />
-                                    {touched.email && errors.email ? (
-                                        <Text
-                                            style={{
-                                                marginTop: 5,
-                                                padding: 1,
-                                                textAlign: 'center',
-                                                color: 'white',
-                                                backgroundColor: '#b32134',
-                                                borderRadius: 10,
+            <ScrollView>
+                <KeyboardAvoidingView style={loginStyle.view}>
+                    <PropertyLogo />
+                    <Spinner
+                        //visibility of Overlay Loading Spinner
+                        visible={isLoading}
+                        color={'#032845'}
+                        //Text with the Spinner
+                        textContent={'Loading...'}
+                        //Text style of the Spinner Text
+                        textStyle={styles.spinnerTextStyle}
+                    />
+                    <Card style={{ width: 350 }}>
+                        <Card.Title
+                            titleNumberOfLines={2}
+                            titleStyle={loginStyle.cardTitle}
+                            title="Welcome to Property Analyser"
+                        ></Card.Title>
+                        <Card.Content>
+                            <Formik
+                                initialValues={{ email: '', password: '' }}
+                                validationSchema={loginForm}
+                                onSubmit={() => {}}
+                            >
+                                {({
+                                    handleSubmit,
+                                    handleChange,
+                                    errors,
+                                    setFieldTouched,
+                                    touched,
+                                    values,
+                                }) => (
+                                    <>
+                                        <TextInput
+                                            theme={{
+                                                colors: {
+                                                    primary: theme.mainGold,
+                                                },
                                             }}
-                                            testID="error-email"
-                                        >
-                                            {errors.email}
-                                        </Text>
-                                    ) : null}
+                                            label="Email"
+                                            keyboardType="email-address"
+                                            onChangeText={handleChange('email')}
+                                            onPressIn={() =>
+                                                setFormError(false)
+                                            }
+                                            testID="email"
+                                            onFocus={() =>
+                                                setFieldTouched('email')
+                                            }
+                                        />
+                                        {touched.email && errors.email ? (
+                                            <Text
+                                                style={{
+                                                    marginTop: 5,
+                                                    padding: 1,
+                                                    textAlign: 'center',
+                                                    color: 'white',
+                                                    backgroundColor: '#b32134',
+                                                    borderRadius: 10,
+                                                }}
+                                                testID="error-email"
+                                            >
+                                                {errors.email}
+                                            </Text>
+                                        ) : null}
 
-                                    <TextInput
-                                        label="Password"
-                                        theme={{
-                                            colors: { primary: theme.mainGold },
-                                        }}
-                                        secureTextEntry={true}
-                                        onChangeText={handleChange('password')}
-                                        testID="password"
-                                        onFocus={() =>
-                                            setFieldTouched('password')
-                                        }
-                                    />
-                                    {touched.password && errors.password ? (
-                                        <Text
-                                            style={{
-                                                color: 'white',
-                                                marginTop: 5,
-                                                padding: 1,
-                                                textAlign: 'center',
-                                                backgroundColor: '#b32134',
-                                                borderRadius: 30,
-                                                marginBottom: 10,
+                                        <TextInput
+                                            label="Password"
+                                            theme={{
+                                                colors: {
+                                                    primary: theme.mainGold,
+                                                },
                                             }}
-                                            testID="error-password"
+                                            secureTextEntry={true}
+                                            onChangeText={handleChange(
+                                                'password'
+                                            )}
+                                            testID="password"
+                                            onFocus={() =>
+                                                setFieldTouched('password')
+                                            }
+                                        />
+                                        {touched.password && errors.password ? (
+                                            <Text
+                                                style={{
+                                                    color: 'white',
+                                                    marginTop: 5,
+                                                    padding: 1,
+                                                    textAlign: 'center',
+                                                    backgroundColor: '#b32134',
+                                                    borderRadius: 30,
+                                                    marginBottom: 10,
+                                                }}
+                                                testID="error-password"
+                                            >
+                                                {errors.password}
+                                            </Text>
+                                        ) : null}
+                                        <Button
+                                            onPress={handleForgotPassword}
+                                            style={loginStyle.cardButton}
+                                            uppercase={false}
+                                            mode={'contained'}
+                                            testID="recoveryButton"
+                                            disabled={
+                                                !!(
+                                                    values.email === '' ||
+                                                    errors.email
+                                                )
+                                            }
                                         >
-                                            {errors.password}
-                                        </Text>
-                                    ) : null}
-                                    <Button
-                                        onPress={handleForgotPassword}
-                                        style={loginStyle.cardButton}
-                                        uppercase={false}
-                                        mode={'contained'}
-                                        testID="recoveryButton"
-                                        disabled={
-                                            !!(
-                                                values.email === '' ||
-                                                errors.email
-                                            )
-                                        }
-                                    >
-                                        Forgot Password
-                                    </Button>
-                                    <Button
-                                        color={'rgb(8,8,8)'}
-                                        style={loginStyle.cardButton}
-                                        uppercase={false}
-                                        onPress={() =>
-                                            loginFromForm(
-                                                values.email,
-                                                values.password
-                                            )
-                                        }
-                                        disabled={
-                                            !!(
-                                                values.email === '' ||
-                                                errors.email
-                                            )
-                                        }
-                                        mode="contained"
-                                        testID="loginButton"
-                                    >
-                                        Login
-                                    </Button>
-                                    <Button
-                                        style={loginStyle.cardButton}
-                                        onPress={register}
-                                        uppercase={false}
-                                        mode={'contained'}
-                                        testID="registerButton"
-                                    >
-                                        Register
-                                    </Button>
-                                </>
-                            )}
-                        </Formik>
-                        {formError
-                            ? errorMessage(
-                                  Constants.INCORRECT_PASSWORD_ERROR,
-                                  Constants.INCORRECT_PASSWORD_ERROR_ADVICE
-                              )
-                            : null}
-                    </Card.Content>
-                </Card>
-            </KeyboardAvoidingView>
+                                            Forgot Password
+                                        </Button>
+                                        <Button
+                                            color={'rgb(8,8,8)'}
+                                            style={loginStyle.cardButton}
+                                            uppercase={false}
+                                            onPress={() =>
+                                                loginFromForm(
+                                                    values.email,
+                                                    values.password
+                                                )
+                                            }
+                                            disabled={
+                                                !!(
+                                                    values.email === '' ||
+                                                    errors.email
+                                                )
+                                            }
+                                            mode="contained"
+                                            testID="loginButton"
+                                        >
+                                            Login
+                                        </Button>
+                                        <Button
+                                            style={loginStyle.cardButton}
+                                            onPress={register}
+                                            uppercase={false}
+                                            mode={'contained'}
+                                            testID="registerButton"
+                                        >
+                                            Register
+                                        </Button>
+                                    </>
+                                )}
+                            </Formik>
+                        </Card.Content>
+                        <View
+                            style={{
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: 20,
+                            }}
+                        >
+                            {formError
+                                ? errorMessage(
+                                      Constants.INCORRECT_PASSWORD_ERROR,
+                                      Constants.INCORRECT_PASSWORD_ERROR_ADVICE
+                                  )
+                                : null}
+                        </View>
+                    </Card>
+                </KeyboardAvoidingView>
+            </ScrollView>
         </SafeAreaView>
     )
 }
